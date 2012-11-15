@@ -49,6 +49,16 @@ var Bill = Backbone.Model.extend({
     defaults: {
 	
     },
+    isRootBill : function(){
+	return this.amendments.length;
+    },
+    getBillAmendmentsAsCollection : function(){
+	if( this.isRootbill ){
+	    c = new BillTimeline({}, this.get("amendments"));
+	    return c;
+	}
+    },
+    
     url: function(){ return  "http://play.fearthecloud.net/index.php/legislation/2.0/bill/" + this.get("id") + ".json"; },
     sync: function(method, model, options) {
 	// Default JSON-request options.
@@ -84,18 +94,22 @@ var Bill = Backbone.Model.extend({
 //define BillTimeline collection
 var BillTimeline = Backbone.Collection.extend({
     model: Bill,
+
     generateDiffs: function(){
         for (index in this.models) {
             if( index ){ 
-            origin = this.models[index-1]
-            updated = this.models[index]
-            var dmp = new diff_match_patch();
-            var d = dmp.diff_main(origin, updated, false);
-            console.log(d);
-            // var ds = dmp.diff_prettyHtml(d);
-            // console.log(ds);
-           }; 
-        } }
+		origin = this.models[index-1]
+		updated = this.models[index]
+		var dmp = new diff_match_patch();
+		var d = dmp.diff_main(origin, updated, false);
+		console.log(d);
+		// var ds = dmp.diff_prettyHtml(d);
+		// console.log(ds);
+
+            }
+        } 
+    }
+    
 });
 
 
@@ -130,6 +144,7 @@ var BillTimelineView = Backbone.View.extend({
     var i =0;
 
 	// This is where we'd do the diff?
+/*
 	_.each(this.collection.models[1].attributes, function (item,key) {
         var dmp = new diff_match_patch();
         var updated = item; 
@@ -138,10 +153,11 @@ var BillTimelineView = Backbone.View.extend({
         // console.log(d);
         var ds = dmp.diff_prettyHtml(d);
 	    console.log(ds);
-        
+
         // that.renderBill(d);
 
 	}, this);
+*/        
     },
 
     renderBill: function (item) {
