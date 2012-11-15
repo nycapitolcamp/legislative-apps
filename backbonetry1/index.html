@@ -24,7 +24,7 @@
                     <span class='logo-title'>Legislation Diff Tool</span>
 
                     <form id="getbill">
-                        Get Bill: <input name="bill-id" value="7033"><input type="submit" >
+                        Get Bill: <input name="bill-id" value="S7033-2011"><input type="submit" >
                     </form>
                 <div>
             </header>                   
@@ -32,6 +32,7 @@
             <div id="contacts"></div>
 
 		<script id="billTemplate" type="text/template">
+		  <article class="contact-container">
 			<h1><%= title %></h1>
 			<div class="bill-number"><%= senateBillNo %></div>
 			<div class="year"><%= year %></div>
@@ -60,6 +61,7 @@
 			<div class="memo"><%= memo %></div>
 			<div class="law"><%= law %></div>
 				// <%= votes %>
+			</article>
 
         </script>
         

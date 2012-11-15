@@ -107,20 +107,22 @@ var Bill = Backbone.Model.extend({
 });
 
 
-
-
-
 //define individual contact view
 var BillView = Backbone.View.extend({
     tagName: "article",
     className: "contact-container",
     template: $("#billTemplate").html(),
 
+    initialize: function(){
+	this.render = _.bind(this.render, this);
+	this.model.bind("change", this.render);
+    },
+
     render: function () {
 	var tmpl = _.template(this.template);
 	
 
-	$(this.el).html(tmpl(this.model.toJSON()));
+	$(this.el).append(tmpl(this.model.toJSON()));
 	return this;
     }
 });
@@ -157,7 +159,20 @@ var BillTimelineView = Backbone.View.extend({
 
 //create instance of master view
 //var BillTimeline = new BillTimelineView();
+jQuery(document).ready(function(){
+    var billID = $(this).find('[name=bill-id]').val();
+    if(billID){
+	var b = new Bill();
+	b.set("id",billID);
 
-var b = new Bill
-b.set("id", "S7033-2011")
-b.fetch()
+	var billView = new BillView({
+	    model : b,
+	    el : "#contacts"
+	});
+
+	b.fetch();	
+    }
+
+});
+
+
