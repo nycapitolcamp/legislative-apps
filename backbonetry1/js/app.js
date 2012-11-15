@@ -43,6 +43,11 @@ var realBills = [
 
 var bills;
 
+//define BillTimeline collection
+var BillTimeline = Backbone.Collection.extend({
+    model: Bill,
+});
+
 
 //define product model
 var Bill = Backbone.Model.extend({
@@ -50,11 +55,21 @@ var Bill = Backbone.Model.extend({
 	
     },
     isRootBill : function(){
-	return this.amendments.length;
+	// this is crapy
+	if(this.get("amendments") && this.get("amendments") > 1){	    
+	    return this.get("amendments").length;
+	}
+	return false;
     },
     getBillAmendmentsAsCollection : function(){
-	if( this.isRootbill ){
-	    c = new BillTimeline({}, this.get("amendments"));
+	if( this.isRootBill() ){
+	    c = new BillTimeline();
+	    _.each( this.get("amendments"), function( id ){
+		var m = new Bill;
+		m.set("id", id);
+		m.fetch();
+		c.push(m);
+	    }.bind(this));
 	    return c;
 	}
     },
@@ -91,26 +106,6 @@ var Bill = Backbone.Model.extend({
     }
 });
 
-//define BillTimeline collection
-var BillTimeline = Backbone.Collection.extend({
-    model: Bill,
-
-    generateDiffs: function(){
-        for (index in this.models) {
-            if( index ){ 
-		origin = this.models[index-1]
-		updated = this.models[index]
-		var dmp = new diff_match_patch();
-		var d = dmp.diff_main(origin, updated, false);
-		console.log(d);
-		// var ds = dmp.diff_prettyHtml(d);
-		// console.log(ds);
-
-            }
-        } 
-    }
-    
-});
 
 
 
@@ -161,5 +156,8 @@ var BillTimelineView = Backbone.View.extend({
 });
 
 //create instance of master view
-var BillTimeline = new BillTimelineView();
+//var BillTimeline = new BillTimelineView();
 
+var b = new Bill
+b.set("id", "S7033-2011")
+b.fetch()
