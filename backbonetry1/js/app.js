@@ -67,7 +67,7 @@ var Bill = Backbone.Model.extend({
     defaults: {
 	
     },
-    url: function(){ return  "http://play.fearthecloud.net/index.php/legislation/2.0/bill/S1234-2011.json"; },
+    url: function(){ return  "http://play.fearthecloud.net/index.php/legislation/2.0/bill/" + this.get("id") + ".json"; },
     sync: function(method, model, options) {
 	// Default JSON-request options.
 	var params = _.extend({
