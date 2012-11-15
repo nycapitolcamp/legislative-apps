@@ -1,9 +1,4 @@
 ﻿//demo data
-var bills = [
-    { name: "Bill 1", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "family" },
-    { name: "Bill 2", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "family" },
-    { name: "Bill 3", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "friend" },
-];
 
 var realBills = [
 	{
@@ -64,17 +59,44 @@ var realBills = [
 
 
 
+var bills;
+
+
 //define product model
 var Bill = Backbone.Model.extend({
     defaults: {
 	
     },
-    url: "http://open.nysenate.gov/legislation/2.0/bill/S1234-2011.json",  
-    sync: function(method, model, options){  
-	options.timeout = 10000;  
-	options.dataType = "jsonp";  
-	return Backbone.sync(method, model, options);  
-    }  
+    url: function(){ return  "http://play.fearthecloud.net/index.php/legislation/2.0/bill/S1234-2011.json"; },
+    sync: function(method, model, options) {
+	// Default JSON-request options.
+	var params = _.extend({
+	    type:         'GET',
+	    dataType:     'jsonp',
+	    url:model.url(),
+	    jsonp: "jsonpCallback",   // the api requires the jsonp callback name to be this exact name
+	    processData:  false,
+	}, options);
+	
+	// Make the request.
+	return $.ajax(params);
+    },
+    parse: function(data) {
+	// parse can be invoked for fetch and save, in case of save it can be undefined so check before using 
+	if (data) {
+	    if ( data.response ) {
+		if (data.response.results) {
+		    if (data.response.results[0] ){
+			if( data.response.results[0].data){
+			    if( data.response.results[0].data.bill ){
+				return data.response.results[0].data.bill;
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
 });
 
 //define BillTimeline collection
