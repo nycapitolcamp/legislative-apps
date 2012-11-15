@@ -1,16 +1,49 @@
-/* Open Legislation Diff CSS */
+/* Open Legislation Main */
 
 .top-header {
-    background-color:#036;
+    background-color:#104E8B;
     height:20px;    
+    color:white;
+    padding-bottom:5px;
+    padding-left:10px;
+}
+
+.top-header a {
+    color:white;
+    text-decoration:none;
+    font-size:.7em;
+    font-family:helvetica, arial;    
+    text-transform: uppercase;
+}
+
+.mid-header {
+    padding-top: 10px;
+    padding-bottom: 5px;
 }
 
 .logo {
-    background-image:"../img/openworldlogo.png";
+    margin-left:20px;    
+}
+
+.logo-title {
+    margin-left:10px;
+    color:#333;
+    position:relative;
+    top:3px;
+    font-size:1.3em;
 }
 
 .main {
-    background-color:#ddd;
+    background-color:#dedede;    
+}
+
+/* Bill Views */
+
+.bill-view {
+
+}
+
+.bill-view .title {
     
 }
 
