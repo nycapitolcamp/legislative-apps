@@ -2,22 +2,34 @@
 
 	//demo data
 	var bills = [
-		{ name: "Contact 1", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "family" },
-		{ name: "Contact 2", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "family" },
-		{ name: "Contact 3", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "friend" },
+		{ name: "Bill 1", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "family" },
+		{ name: "Bill 2", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "family" },
+		{ name: "Bill 3", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "friend" },
 	];
+
+
+
 
 	//define product model
 	var Bill = Backbone.Model.extend({
 		defaults: {
 		
-		}
+		},http://search.twitter.com/sear
+		url: "http://open.nysenate.gov/legislation/2.0/bill/S1234-2011.json",  
+		sync: function(method, model, options){  
+			options.timeout = 10000;  
+			options.dataType = "jsonp";  
+			return Backbone.sync(method, model, options);  
+		}  
 	});
 
 	//define BillTimeline collection
 	var BillTimeline = Backbone.Collection.extend({
 		model: Bill
 	});
+
+
+
 
 	//define individual contact view
 	var BillView = Backbone.View.extend({
@@ -28,6 +40,7 @@
 		render: function () {
 			var tmpl = _.template(this.template);
 			
+
 			$(this.el).html(tmpl(this.model.toJSON()));
 			return this;
 		}
@@ -44,12 +57,15 @@
 
 		render: function () {
 			var that = this;
+
+			// This is where we'd do the diff?
+
 			_.each(this.collection.models, function (item) {
-				that.renderContact(item);
+				that.renderBill(item);
 			}, this);
 		},
 
-		renderContact: function (item) {
+		renderBill: function (item) {
 			var billView = new BillView({
 				model: item
 			});
