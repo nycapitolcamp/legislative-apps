@@ -5,6 +5,62 @@ var bills = [
     { name: "Bill 3", address: "1, a street, a town, a city, AB12 3CD", tel: "0123456789", email: "anemail@me.com", type: "friend" },
 ];
 
+var realBills = [
+	{
+		"year":"2011",
+		"senateBillNo":"S607-2011",
+		"title":"Relates to the definition of alternate energy production facilities",
+		"lawSection":"Public Service Law",
+		"sameAs":"A3536",
+		"previousVersions":["S8310-2009"],
+		"sponsor":{"fullname":"MAZIARZ"},
+		"coSponsors":null,
+		"multiSponsors":null,
+		"summary":"Adds lithium ion energy batteries to the definition of alternate energy production facilities.",
+		"currentCommittee":null,
+		"actions":[null, null, null],
+		"fulltext": "A really long string",
+		"memo": "A much shorter string",
+		"law":"Amd S2, Pub Serv L ",
+		"votes":[null, null, null]
+	},
+	{
+		"year":"2011",
+		"senateBillNo":"S607-2011",
+		"title":"Relates to the definition of alternate energy production facilities",
+		"lawSection":"Public Service Law",
+		"sameAs":"A3536",
+		"previousVersions":["S8310-2009"],
+		"sponsor":{"fullname":"MAZIARZ"},
+		"coSponsors":null,
+		"multiSponsors":null,
+		"summary":"Adds lithium ion energy batteries to the definition of alternate energy production facilities.",
+		"currentCommittee":null,
+		"actions":[null, null, null],
+		"fulltext": "A really long string",
+		"memo": "A much shorter string",
+		"law":"Amd S2, Pub Serv L ",
+		"votes":[null, null, null]
+	},
+	{
+		"year":"2011",
+		"senateBillNo":"S607-2011",
+		"title":"Relates to the definition of alternate energy production facilities",
+		"lawSection":"Public Service Law",
+		"sameAs":"A3536",
+		"previousVersions":["S8310-2009"],
+		"sponsor":{"fullname":"MAZIARZ"},
+		"coSponsors":null,
+		"multiSponsors":null,
+		"summary":"Adds lithium ion energy batteries to the definition of alternate energy production facilities.",
+		"currentCommittee":null,
+		"actions":[null, null, null],
+		"fulltext": "A really long string",
+		"memo": "A much shorter string",
+		"law":"Amd S2, Pub Serv L ",
+		"votes":[null, null, null]
+	}
+]
 
 
 
@@ -33,7 +89,7 @@ var BillTimeline = Backbone.Collection.extend({
 var BillView = Backbone.View.extend({
     tagName: "article",
     className: "contact-container",
-    template: $("#contactTemplate").html(),
+    template: $("#billTemplate").html(),
 
     render: function () {
 	var tmpl = _.template(this.template);
@@ -49,7 +105,7 @@ var BillTimelineView = Backbone.View.extend({
     el: $("#contacts"),
 
     initialize: function () {
-	this.collection = new BillTimeline(bills);
+	this.collection = new BillTimeline(realBills);
 	this.render();
     },
 
