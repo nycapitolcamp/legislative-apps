@@ -130,18 +130,10 @@ var BillTimelineView = Backbone.View.extend({
     var i =0;
 
 	// This is where we'd do the diff?
-	_.each(this.collection.models[1].attributes, function (item,key) {
-        var dmp = new diff_match_patch();
-        var updated = item; 
-        var origin = this.collection.models[0].attributes[key]; 
-        var d = dmp.diff_main(origin, updated, false);
-        // console.log(d);
-        var ds = dmp.diff_prettyHtml(d);
-	    console.log(ds);
+    _.each(this.collection.models, function (item) {
+        that.renderBill(item);
         
-        // that.renderBill(d);
-
-	}, this);
+    }, this);
     },
 
     renderBill: function (item) {
