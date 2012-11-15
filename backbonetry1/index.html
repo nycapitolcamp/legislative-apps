@@ -15,12 +15,25 @@
 			<div class="year"><%= year %></div>
 			<div class="law-section"><%= lawSection %></div>
 			<div class="same-as"><%= sameAs %></div>
-			<div class="previousVersions"></div>
-				// <%= previousVersions %>
-				// <%= sponsor %>
+			<ul class="previousVersions">
+				<% for(var previousVersion in previousVersions) { %>
+					<li><%= previousVersions[previousVersion] %></li>
+				<% } %>
+			</ul>
+			<ul class="sponsor">
+				<% for(var key in sponsor) { %>
+					<li><strong><%= key %>: <%= sponsor[key] %></li>
+				<% } %>
+			</ul>
 			<div class="summary"><%= summary %></div>
 			<div class="current-committee"><%= currentCommittee %></div>
-				// <%= actions %>
+			<ul class="actions">
+				<% for(var action in actions) { %>
+					<li>
+						< actions[action]['text'] >
+					</li>
+				<% } %>
+			</ul>
 			<div class="full-text"><%= fulltext %></div>
 			<div class="memo"><%= memo %></div>
 			<div class="law"><%= law %></div>
