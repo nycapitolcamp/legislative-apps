@@ -21,7 +21,7 @@ var realBills = [
 	},
 	{
 		"year":"2011",
-		"senateBillNo":"S607-2011",
+		"senateBillNo":"S607A-2011A",
 		"title":"Relates to the definition of alternate energy production facilities",
 		"lawSection":"Public Service Law",
 		"sameAs":"A3536",
@@ -29,25 +29,7 @@ var realBills = [
 		"sponsor":{"fullname":"MAZIARZ"},
 		"coSponsors":null,
 		"multiSponsors":null,
-		"summary":"Adds lithium ion energy batteries to the definition of alternate energy production facilities.",
-		"currentCommittee":null,
-		"actions":[null, null, null],
-		"fulltext": "A really long string",
-		"memo": "A much shorter string",
-		"law":"Amd S2, Pub Serv L ",
-		"votes":[null, null, null]
-	},
-	{
-		"year":"2011",
-		"senateBillNo":"S607-2011",
-		"title":"Relates to the definition of alternate energy production facilities",
-		"lawSection":"Public Service Law",
-		"sameAs":"A3536",
-		"previousVersions":["S8310-2009"],
-		"sponsor":{"fullname":"MAZIARZ"},
-		"coSponsors":null,
-		"multiSponsors":null,
-		"summary":"Adds lithium ion energy batteries to the definition of alternate energy production facilities.",
+		"summary":"Adds lithium ion energy batteries to the definition aaaa of alternate energy production facilities.",
 		"currentCommittee":null,
 		"actions":[null, null, null],
 		"fulltext": "A really long string",
@@ -101,7 +83,19 @@ var Bill = Backbone.Model.extend({
 
 //define BillTimeline collection
 var BillTimeline = Backbone.Collection.extend({
-    model: Bill
+    model: Bill,
+    generateDiffs: function(){
+        for (index in this.models) {
+            if( index ){ 
+            origin = this.models[index-1]
+            updated = this.models[index]
+            var dmp = new diff_match_patch();
+            var d = dmp.diff_main(origin, updated, false);
+            console.log(d);
+            // var ds = dmp.diff_prettyHtml(d);
+            // console.log(ds);
+           }; 
+        } }
 });
 
 
@@ -133,11 +127,20 @@ var BillTimelineView = Backbone.View.extend({
 
     render: function () {
 	var that = this;
+    var i =0;
 
 	// This is where we'd do the diff?
+	_.each(this.collection.models[1].attributes, function (item,key) {
+        var dmp = new diff_match_patch();
+        var updated = item; 
+        var origin = this.collection.models[0].attributes[key]; 
+        var d = dmp.diff_main(origin, updated, false);
+        // console.log(d);
+        var ds = dmp.diff_prettyHtml(d);
+	    console.log(ds);
+        
+        // that.renderBill(d);
 
-	_.each(this.collection.models, function (item) {
-	    that.renderBill(item);
 	}, this);
     },
 
