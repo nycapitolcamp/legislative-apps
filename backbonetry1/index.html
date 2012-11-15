@@ -1,45 +1,53 @@
-﻿<!DOCTYPE html>
+﻿<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Backbone.js Web App</title>
+        <link rel="stylesheet" href="css/main.css" />
+        <link rel="stylesheet" href="css/screen.css" />
+    </head>
+    <body>
+        <div class='main'>
 
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<title>Backbone.js Web App</title>
-		<link rel="stylesheet" href="css/screen.css" />
-	</head>
-	<body>
-		<div id="contacts"></div>
+            <header>
+                <div class='top-header'></div>
+                <img src="../backbonetry1/img/openwordlogo.png" />
+            </header>                   
 
-		<script id="billTemplate" type="text/template">
-			<h1><%= title %></h1>
-			<div class="bill-number"><%= senateBillNo %></div>
-			<div class="year"><%= year %></div>
-			<div class="law-section"><%= lawSection %></div>
-			<div class="same-as"><%= sameAs %></div>
-			<div class="previousVersions"></div>
-				// <%= previousVersions %>
-				// <%= sponsor %>
-			<div class="summary"><%= summary %></div>
-			<div class="current-committee"><%= currentCommittee %></div>
-				// <%= actions %>
-			<div class="full-text"><%= fulltext %></div>
-			<div class="memo"><%= memo %></div>
-			<div class="law"><%= law %></div>
-				// <%= votes %>
+                    <div id="contacts"></div>
 
-		</script>
-		
-		<script id="contactTemplate" type="text/template">
-			<h1><%= name %><span><%= type %></span></h1>
-			<div><%= address %></div>
-			<dl>
-				<dt>Tel:</dt><dd><%= tel %></dd>
-				<dt>Email:</dt><dd><a href="mailto:<%= email %>"><%= email %></a></dd>
-			</dl>
-		</script>
-		<script src="js/jquery-1.7.1.min.js"></script>
-		<script src="js/json2.js"></script>
-		<script src="js/underscore-min.js"></script>
-		<script src="js/backbone-min.js"></script>
-		<script src="js/app.js"></script>
-	</body>
+        <script id="billTemplate" type="text/template">
+            <h1><%= title %></h1>
+            <div class="bill-number"><%= senateBillNo %></div>
+            <div class="year"><%= year %></div>
+            <div class="law-section"><%= lawSection %></div>
+            <div class="same-as"><%= sameAs %></div>
+            <div class="previousVersions"></div>
+                // <%= previousVersions %>
+                // <%= sponsor %>
+            <div class="summary"><%= summary %></div>
+            <div class="current-committee"><%= currentCommittee %></div>
+                // <%= actions %>
+            <div class="full-text"><%= fulltext %></div>
+            <div class="memo"><%= memo %></div>
+            <div class="law"><%= law %></div>
+                // <%= votes %>
+
+        </script>
+        
+        <script id="contactTemplate" type="text/template">
+            <h1><%= name %><span><%= type %></span></h1>
+            <div><%= address %></div>
+            <dl>
+                <dt>Tel:</dt><dd><%= tel %></dd>
+                <dt>Email:</dt><dd><a href="mailto:<%= email %>"><%= email %></a></dd>
+            </dl>
+        </script>
+
+        </div>
+        <script src="js/jquery-1.7.1.min.js"></script>
+        <script src="js/json2.js"></script>
+        <script src="js/underscore-min.js"></script>
+        <script src="js/backbone-min.js"></script>
+        <script src="js/app.js"></script>
+    </body>
 </html>
