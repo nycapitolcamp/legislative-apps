@@ -72,29 +72,23 @@ var BillVersion = Backbone.Model.extend({
 
 
     getBillVersionAmendmentsAsCollection : function(){
-	if( this.isRootBillVersion() ){
-	    var c = new BillVersion_Collection();
-        
-        // console.log(this.getBillDiff('two','one two',true));
-	    
-        // this is kind of ugly,  because we can't get a url that will give us the
-	    // json,  and we've already fetched the data from our initial bill we make
-	    // a copy of the new bill to remain consistent,  all of this will go away
-	    // once we get a chance to pull in collection data correctly
-	    var root_bill = new BillVersion({
-		  id : this.get("id") 
-	    });
-	    c.push(root_bill);
+        if( this.isRootBillVersion() ){
+            var c = new BillVersion_Collection();
+            c.push(new BillVersion({
+                    id : this.get("id")
+            }));
 
-	    _.each( this.get("amendments"), function( bill_id ){
-		var m = new BillVersion({
-		  id : bill_id
-		});
-		c.push(m);
-	    }.bind(this));
+            // Cycle through and fetch all of the linked amendments.
+            _.each( this.get("amendments"), function( bill_id ){
+                var amendment = new BillVersion({
+                    id : bill_id
+                });
 
-	    return c;
-	}
+                c.push(amendment);
+            }.bind(this));
+
+            return c;
+        }
     },
     
     // the url function should return a string that represents the url
