@@ -385,6 +385,7 @@ function Bill(data) {
         var amendmentID = data.amendments[bkey]
 
         var thisBill = this;
+        thisBill.numAmendments++;
         getBillData(amendmentID, function(data) {
 
             var results = data.response.results;
@@ -393,16 +394,15 @@ function Bill(data) {
             for(key in results) {
                 // console.log(results[key].data.bill);
                 thisBill.amendments.push(results[key].data.bill);
-                thisBill.amendments[thisBill.amendments.length] = results[key].data.bill;
+                thisBill.amendments[thisBill.amendments.length-1] = results[key].data.bill;
             }
-
+            
             // Wait till we have all the amendments
-            if (thisBill.numAmendments == thisBill.amendments.length+1) {                
+            if (thisBill.numAmendments == thisBill.amendments.length) {                
                thisBill.render();
             }
         });
-
-        this.numAmendments++;
+        
 
         
     }
@@ -410,15 +410,15 @@ function Bill(data) {
 
 Bill.prototype.template = $("#billTemplate").html();
 Bill.prototype.render = function(){
-    
+    console.log('reader');
     this.difftext = BillDiff(this.fulltext, this.amendments[0].fulltext, true);
 
     
     var tmpl = _.template(this.template);   
     var view = $("<article class='bill-container'>").html(tmpl({difftext:this.difftext}));
-    $('#bills').html(view);
+    $('#bills').empty().html(view);
 
  
-    console.log(this.difftext);
+    // console.log(this.difftext);
 
 };
