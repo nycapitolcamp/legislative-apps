@@ -374,6 +374,7 @@ function Bill(data) {
     for (key in data) {
         this[key] = data[key];
     }
+    this.data = data;
     // console.log(data)
 
 
@@ -391,6 +392,7 @@ function Bill(data) {
             for(key in results) {
                 // console.log(results[key].data.bill);
                 thisBill.amendments.push(results[key].data.bill);
+                thisBill.amendments[thisBill.amendments.length] = results[key].data.bill;
             }
         });
 
@@ -398,6 +400,7 @@ function Bill(data) {
     }
    console.log(this)
 }
+Bill.prototype.template ()
 Bill.prototype.example = 'ex';
 Bill.prototype.render = function(){
     
