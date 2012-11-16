@@ -89,6 +89,20 @@ function BillDiff(a,b,pretty){
     // this is basic
     var dmp = new diff_match_patch();
     var ds = dmp.diff_main(a, b, false);
+    var jsonStr = JSON.stringify(ds);
+    /** Definitions from diff_match_patch **/
+    var DIFF_DELETE = -1;
+    var DIFF_INSERT = 1;
+    var DIFF_EQUAL = 0;
+    var insertions = 0;
+    var deletions = 0;
+    var unchanged = 0;
+    for(var i=0; i<ds.length; i++){
+     if(ds[i][0]==DIFF_EQUAL) unchanged=unchanged+1;
+     if(ds[i][0]==DIFF_INSERT) insertions=insertions+1;
+     if(ds[i][0]==DIFF_DELETE) deletions=deletions+1;
+     }
+    alert('Total lines = '+ds.length+'\n unchanged '+unchanged+'\n deleted '+deletions+'\n inserted '+insertions);
     if(pretty){
         var ds = dmp.diff_prettyHtml(ds);
     }
