@@ -286,9 +286,14 @@ jQuery(document).ready(function(){
 
         // pull the bill ID from the input element
         // TODO: Verify that the input is valid first
-        if( bill_input.val() ) {
+        var bill_id = bill_input.val();
+        if( bill_id) {
+
+            // Try to strip the amendment version from in the input string
+            // TODO: It'd be better to use a given amendment version as a "start back from here"
+            bill_id = bill_id.replace(/([A-Z])0*([0-9]{1,5})[A-Z]?-([0-9]{4})/,'$1$2-$3')
             billVersion = new BillVersion({
-                id : bill_input.val()
+                id : bill_id
             });
 
             // technically we would want to bootstrap this data from the server
