@@ -313,7 +313,7 @@ jQuery(document).ready(function(){
 
 
             getBillData(bill_id);
-            
+
             return false;
         }
     }).submit();
@@ -347,13 +347,9 @@ function getBillData(billID) {
                     var billData = results[key].data.bill;
 
                     // CREATE NEW BILL
-                    // var bill = new Bill(billData);
+                    var bill = new Bill(billData);
 
-                    // Amendments
-                    for(bkey in billData.amendments) {
-                        var amendmentID = billData.amendments[bkey]
-                        console.log(amendmentID)
-                    }
+                    
                 }
             }
 
@@ -363,4 +359,21 @@ function getBillData(billID) {
 }
 
 
+
+
+function Bill(data) {
+
+    console.log(data);
+    
+    // Amendments
+    for(bkey in data.amendments) {
+        var amendmentID = data.amendments[bkey]
+        console.log(amendmentID)
+    }
+   
+}
+Bill.prototype.example = 'ex';
+Bill.prototype.render = function(){
+    
+};
 
