@@ -134,19 +134,32 @@ var BillVersion = Backbone.Model.extend({
  *  Frontend Views
  */
 
-
 //define individual contact view
-var BillVersionView = Backbone.View.extend({
+var BillVersion_View = Backbone.View.extend({
     template: $("#billTemplate").html(),
     
     initialize: function(){
+	// this line makes sure that when we run the render function that
+	// the 'this' inside the render function still refers to the bill
+	// view and not something else (closures are ridiculous)
 	this.render = _.bind(this.render, this);
+
+	// this is a quick and dirty way to get the view to render when
+	// the model 'fetch' finally returns.  on the return,  the model
+	// fires a 'change' event which we mind to here.  essetially this
+	// means whenever the model data changes,  the view runs the
+	// 'render' function
+
 	this.model.bind("change", this.render);
     },
     
+    // render the model by grabbing the template script and using
+    // underscore's template function - currently this just appends
+    // to the 'el' (current the '#contacts') div. as the interface
+    // evolves that will probably have to change. - Chris (11/15/2012)
+
     render: function () {
-	var tmpl = _.template(this.template);
-	
+	var tmpl = _.template(this.template);	
 	$(this.el).append(tmpl(this.model.toJSON()));
 	return this;
     }
@@ -175,7 +188,7 @@ var BillVersion_CollectionView = Backbone.View.extend({
     },
 
     renderBillVersion: function (item) {
-	var billView = new BillVersionView({
+	var billView = new BillVersion_View({
 	    model: item
 	});
 	this.$el.append(billView.render().el);
@@ -187,17 +200,19 @@ var BillVersion_CollectionView = Backbone.View.extend({
  */
 
 jQuery(document).ready(function(){
-    // pull the billID from the input element
+
+    // pull the bill ID from the input element
     // moving forward we'll probably want to move this into
     // a function which can be set on the form 'submit' button
     // instead of actually submitting the form we catch the
     // submit event and run this code instead.
 
     if( $('[name=bill-id]').val() ){
-	var b = new BillVersion();
-	b.set("id", $('[name=bill-id]').val());
+	var b = new BillVersion({
+	    id : $('[name=bill-id]').val()
+	});
 
-	var billView = new BillVersionView({
+	var billView = new BillVersion_View({
 	    model : b,
 	    el : "#contacts"
 	});
