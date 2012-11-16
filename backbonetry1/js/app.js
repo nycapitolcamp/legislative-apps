@@ -197,7 +197,7 @@ var BillVersion_Collection_View = Backbone.View.extend({
 	    // haha - boundary checking, what is this C?
 	    if( this.collection.at( this.collection.length - i ) ){
 		var model_id = this.collection.at( this.collection.length - i ).get("id");	
-		this.$el.append("<article id='" + model_id + "' class='contact-container'>")
+		this.$el.append("<article id='" + model_id + "' class='bill-container'>")
 		var view = new BillVersion_View({
 		    model: this.collection.get(model_id),
 		    el : "#" + model_id
@@ -287,7 +287,7 @@ jQuery(document).ready(function(){
 	b.bind("change", function(){
 	    bill_collection = b.getBillVersionAmendmentsAsCollection();
 	    bill_collection_view = new BillVersion_Collection_View({
-		el : "#contacts",		
+		el : "#bills",		
 		collection : bill_collection
 	    });
 	    

@@ -1,9 +1,115 @@
-﻿.contact-container { width:400px; padding:10px; border:1px solid #aaa; margin:0 10px 10px 0; float:left; font-family:sans-serif; color:#333; background-color:#eee; }
-.contact-container h1 { margin:0; font-weight:normal; }
-.contact-container h1 span { float:right; font-size:14px; line-height:24px; font-weight:normal; }
-.contact-container img { border-width:1px; border-style:solid; border-color:#fff; border-right-color:#aaa; border-bottom-color:#aaa; margin-right:10px; float:left; }
-.contact-container div { margin-bottom:24px; font-size:14px; }
-.contact-container a { color:#333;}
-.contact-container dl { margin:0; float:left; font-size:14px; }
-.contact-container dt, .contact-container dd { margin:0; float:left; }
-.contact-container dt { width:50px; clear:left; }
+/* Micro ClearFix Mixin */
+.clearfix {
+  zoom: 1;
+}
+.clearfix:before,
+.clearfix:after {
+  content: "";
+  display: table;
+}
+.clearfix:after {
+  clear: both;
+}
+body {
+  font-family: Arial, sans-serif;
+}
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  font-size: 12px;
+  border-radius: 1px;
+  padding: 4px 8px;
+  background: #eee;
+  border: solid 1px #ddd;
+}
+.btn:hover {
+  background: #eaeaea;
+  border: solid 1px #d9d9d9;
+  color: #666;
+}
+.btn:active {
+  background: #dfdfdf;
+  border: solid 1px #ccc;
+  color: #888;
+}
+.collapsible .collapse {
+  display: none;
+}
+.bill-container {
+  width: 47%;
+  margin-right: 2%;
+  float: left;
+  position: relative;
+  left: 2%;
+  word-wrap: break-word;
+}
+.bill-container header {
+  zoom: 1;
+  padding: 1em;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+.bill-container header:before,
+.bill-container header:after {
+  content: "";
+  display: table;
+}
+.bill-container header:after {
+  clear: both;
+}
+.bill-container header h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  line-height: 1.2em;
+}
+.bill-container header .subtitle {
+  zoom: 1;
+  margin: 0;
+}
+.bill-container header .subtitle:before,
+.bill-container header .subtitle:after {
+  content: "";
+  display: table;
+}
+.bill-container header .subtitle:after {
+  clear: both;
+}
+.bill-container header .law-section {
+  float: right;
+}
+.bill-container header .bill-number {
+  float: left;
+}
+.bill-container header .detail {
+  border-top: solid 4px #003366;
+  padding-top: 1em;
+  clear: both;
+  margin-top: 1em;
+  font-size: 14px;
+}
+.bill-container header .detail .collapse {
+  clear: both;
+}
+.bill-container header .detail dt {
+  font-weight: 700;
+  float: left;
+  clear: both;
+  padding: 1em 0 .5em;
+}
+.bill-container header .detail dd {
+  margin-bottom: 25px;
+  padding: 1em 2em;
+  background: #eee;
+  border-top: solid 1px #ddd;
+  margin: 0;
+  clear: both;
+}
+.bill-container .content {
+  font-size: 12px;
+  white-space: pre;
+  font-family: Courier;
+  margin-bottom: 60px;
+}
+.bill-container header {
+  border: solid 1px #eee;
+}
