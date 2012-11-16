@@ -364,7 +364,12 @@ function getBillData(billID) {
 function Bill(data) {
 
     console.log(data);
-    
+
+    // Merge objects
+    for (key in data) {
+        this[key] = data[key];
+    }
+
     // Amendments
     for(bkey in data.amendments) {
         var amendmentID = data.amendments[bkey]
