@@ -79,8 +79,8 @@ var BillVersion = Backbone.Model.extend({
     // the url function should return a string that represents the url
     // where the resource is located.
 
-    url: function(){ 
-	return  "http://play.fearthecloud.net/index.php/legislation/2.0/bill/" + this.get("id") + ".json"; 
+    url: function(){
+	return  "http://open.nysenate.gov/legislation/2.0/bill/" + this.get("id") + ".jsonp";
     },
 
     // backbone was originally designed to work with a Rails style REST implementation.  It has more general
@@ -96,7 +96,6 @@ var BillVersion = Backbone.Model.extend({
 	    type:         'GET',
 	    dataType:     'jsonp',
 	    url:model.url(),
-	    jsonp: "jsonpCallback",   // the api requires the jsonp callback name to be this exact name
 	    processData:  false,
 	}, options);
 	
