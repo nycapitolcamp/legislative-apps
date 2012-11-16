@@ -272,36 +272,42 @@ var bill_collection_view
 
 jQuery(document).ready(function(){
 
-    // pull the bill ID from the input element
-    // moving forward we'll probably want to move this into
-    // a function which can be set on the form 'submit' button
-    // instead of actually submitting the form we catch the
-    // submit event and run this code instead.
+    var bill_form = $('#getbill');
+    var bill_input = $('[name=bill-id]');
 
-    if( $('[name=bill-id]').val() ){
-	b = new BillVersion({
-	    id : $('[name=bill-id]').val()
-	});
-
-
-	// technically we would want to bootstrap this data from the server
-	// that would resolve quite a few little ugly hacks that we're going to
-	// encounter
-
-	b.bind("change", function(){
-	    bill_collection = b.getBillVersionAmendmentsAsCollection();
-	    bill_collection_view = new BillVersion_Collection_View({
-		el : "#bills",		
-		collection : bill_collection
-	    });
-	    
-	    bill_collection_view.renderLastN(2);
-	}.bind(b));
-
-	b.fetch();	
-
+    $.urlParam = function(name, default_value) {
+        var results = new RegExp('[\\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
+        return results[1] || default_value;
     }
 
+    bill_input.val($.urlParam('bill-id','S7033-2011'));
+
+    bill_form.bind("submit", function() {
+
+        // pull the bill ID from the input element
+        // TODO: Verify that the input is valid first
+        if( bill_input.val() ) {
+            billVersion = new BillVersion({
+                id : bill_input.val()
+            });
+
+            // technically we would want to bootstrap this data from the server
+            // that would resolve quite a few little ugly hacks that we're going to
+            // encounter
+            billVersion.bind("change", function(){
+                bill_collection = billVersion.getBillVersionAmendmentsAsCollection();
+                bill_collection_view = new BillVersion_Collection_View({
+                    el : "#bills",
+                    collection : bill_collection
+                });
+
+                bill_collection_view.renderLastN(2);
+            }.bind(billVersion));
+
+            billVersion.fetch();
+            return false;
+        }
+    }).submit();
 });
 
 
