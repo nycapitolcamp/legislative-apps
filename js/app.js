@@ -292,27 +292,75 @@ jQuery(document).ready(function(){
             // Try to strip the amendment version from in the input string
             // TODO: It'd be better to use a given amendment version as a "start back from here"
             bill_id = bill_id.replace(/([A-Z])0*([0-9]{1,5})[A-Z]?-([0-9]{4})/,'$1$2-$3')
-            billVersion = new BillVersion({
-                id : bill_id
-            });
+            // billVersion = new BillVersion({
+            //     id : bill_id
+            // });
 
-            // technically we would want to bootstrap this data from the server
-            // that would resolve quite a few little ugly hacks that we're going to
-            // encounter
-            billVersion.bind("change", function(){
-                bill_collection = billVersion.getBillVersionAmendmentsAsCollection();
-                bill_collection_view = new BillVersion_Collection_View({
-                    el : "#bills",
-                    collection : bill_collection
-                });
+            // // technically we would want to bootstrap this data from the server
+            // // that would resolve quite a few little ugly hacks that we're going to
+            // // encounter
+            // billVersion.bind("change", function(){
+            //     bill_collection = billVersion.getBillVersionAmendmentsAsCollection();
+            //     bill_collection_view = new BillVersion_Collection_View({
+            //         el : "#bills",
+            //         collection : bill_collection
+            //     });
 
-                bill_collection_view.renderLastN(2);
-            }.bind(billVersion));
+            //     bill_collection_view.renderLastN(2);
+            // }.bind(billVersion));
 
-            billVersion.fetch();
+            // billVersion.fetch();
+
+
+            getBillData(bill_id);
+            
             return false;
         }
     }).submit();
 });
+
+
+
+function getBillData(billID) {
+
+    var url = "http://open.nysenate.gov/legislation/2.0/bill/" + billID + ".jsonp";
+
+    // Make the request.
+    return $.ajax({
+        type: 'GET',
+        dataType: 'jsonp',
+        url: url,
+        success: function(data) {
+
+            if (data.response.metadata.totalresults == '0') {
+                alert('No Bills Match');
+                return false;
+            }   
+
+            var results = data.response.results;
+
+            if (results) {
+
+                // Iterate over matching bills
+                for(key in results) {
+
+                    var billData = results[key].data.bill;
+
+                    // CREATE NEW BILL
+                    // var bill = new Bill(billData);
+
+                    // Amendments
+                    for(bkey in billData.amendments) {
+                        var amendmentID = billData.amendments[bkey]
+                        console.log(amendmentID)
+                    }
+                }
+            }
+
+        },
+        processData: false,
+    });
+}
+
 
 
