@@ -358,7 +358,15 @@ function getBillData(billID) {
     });
 }
 
-
+function BillDiff(a,b,pretty){
+    // this is basic
+    var dmp = new diff_match_patch();
+    var ds = dmp.diff_main(a, b, false);
+    if(pretty){
+        var ds = dmp.diff_prettyHtml(ds);
+    }
+    return ds;
+}
 
 
 function Bill(data) {
@@ -369,6 +377,7 @@ function Bill(data) {
     for (key in data) {
         this[key] = data[key];
     }
+    // console.log(data)
 
     // Amendments
     for(bkey in data.amendments) {
