@@ -26,27 +26,48 @@
  */
 
 //define BillTimeline collection
-var BillTimeline = Backbone.Collection.extend({
-    model: Bill,
+var BillVersion_Collection = Backbone.Collection.extend({
+    model: BillVersion,
 });
 
 //define product model
-var Bill = Backbone.Model.extend({
+var BillVersion = Backbone.Model.extend({
     defaults: {
 	
     },
-    isRootBill : function(){
+
+    // This does a rudimentary check to see if the amendments data
+    // has more than one element.  if it does then we can assume
+    // that it is a 'root' bill version,  which is to say,  it knows about
+    // all children bill versions.
+    //
+    // I don't know if this accurately reflects the nature of the domain though 
+    // - Chris (11/12/25)
+
+    isRootBillVersion : function(){
 	// this is crapy
 	if(this.get("amendments") && this.get("amendments") > 1){	    
 	    return this.get("amendments").length;
 	}
 	return false;
     },
-    getBillAmendmentsAsCollection : function(){
-	if( this.isRootBill() ){
-	    c = new BillTimeline();
+
+    // Assuming the current bill model is a "root" bill as defined by the function
+    // isRootBillVersion() then we generate a new Collection of models fetching their data
+    // remember though that the fetch is just a wrapper around an ajax call. this means
+    // it will run asynchronously. The function should return immediately,  but the data
+    // won't be there right away.  In the long run it may not be the best idea to run
+    // the model fetch here right away.  Of course in the long run we'll be able to query
+    // a url that returns all the Bill versions in the 'results' array which means this
+    // functionality will become deprecated and instead that url will be used on the 
+    // BillVersion Collection object
+
+
+    getBillVersionAmendmentsAsCollection : function(){
+	if( this.isRootBillVersion() ){
+	    c = new BillVersion_Collection();
 	    _.each( this.get("amendments"), function( id ){
-		var m = new Bill;
+		var m = new BillVersion;
 		m.set("id", id);
 		m.fetch();
 		c.push(m);
@@ -55,7 +76,20 @@ var Bill = Backbone.Model.extend({
 	}
     },
     
-    url: function(){ return  "http://play.fearthecloud.net/index.php/legislation/2.0/bill/" + this.get("id") + ".json"; },
+    // the url function should return a string that represents the url
+    // where the resource is located.
+
+    url: function(){ 
+	return  "http://play.fearthecloud.net/index.php/legislation/2.0/bill/" + this.get("id") + ".json"; 
+    },
+
+    // backbone was originally designed to work with a Rails style REST implementation.  It has more general
+    // applicability now,  but it still makes certain assumptions about the nature of the data that is available
+    // at the resource returned by this.url(). the 'fetch' function is supposed to provide (mostly) seamless
+    // ajax GET integration with the resource,  unfortunately we need to be a little more fancy because of the
+    // whole cross domain thing.  To do this we rewrite the function that underlies 'fetch' -  the 'sync' function
+    // this lets us get away with using jsonp
+
     sync: function(method, model, options) {
 	// Default JSON-request options.
 	var params = _.extend({
@@ -69,8 +103,15 @@ var Bill = Backbone.Model.extend({
 	// Make the request.
 	return $.ajax(params);
     },
+
+    // While sync is the underlying function for making calls to the server,  'parse' is the underlying
+    // function that manages the data and assigns it to the backbone model.  In this case the actual data
+    // is wrapped by a bunch of message metadata - this metadata is great,  and could probably be more
+    // elegantly used to do error handling,  but for now,  we just drill down and return the actual data
+    // that we want.
+
     parse: function(data) {
-	// parse can be invoked for fetch and save, in case of save it can be undefined so check before using 
+	// this is a little silly,  there is a better way i just havn't looked it up - Chris (11/15/2012)
 	if (data) {
 	    if ( data.response ) {
 		if (data.response.results) {
@@ -95,7 +136,7 @@ var Bill = Backbone.Model.extend({
 
 
 //define individual contact view
-var BillView = Backbone.View.extend({
+var BillVersionView = Backbone.View.extend({
     template: $("#billTemplate").html(),
     
     initialize: function(){
@@ -112,11 +153,11 @@ var BillView = Backbone.View.extend({
 });
 
 //define master view
-var BillTimelineView = Backbone.View.extend({
+var BillVersion_CollectionView = Backbone.View.extend({
     el: $("#contacts"),
 
     initialize: function () {
-	this.collection = new BillTimeline(realBills);
+	this.collection = new BillVersion_Collection(realBills);
 	this.render();
     },
 
@@ -127,14 +168,14 @@ var BillTimelineView = Backbone.View.extend({
 	// This is where we'd do the diff?
 
     _.each(this.collection.models, function (item) {
-        that.renderBill(item);
+        that.renderBillVersion(item);
         
     }, this);
  
     },
 
-    renderBill: function (item) {
-	var billView = new BillView({
+    renderBillVersion: function (item) {
+	var billView = new BillVersionView({
 	    model: item
 	});
 	this.$el.append(billView.render().el);
@@ -153,10 +194,10 @@ jQuery(document).ready(function(){
     // submit event and run this code instead.
 
     if( $('[name=bill-id]').val() ){
-	var b = new Bill();
+	var b = new BillVersion();
 	b.set("id", $('[name=bill-id]').val());
 
-	var billView = new BillView({
+	var billView = new BillVersionView({
 	    model : b,
 	    el : "#contacts"
 	});
