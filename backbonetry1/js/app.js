@@ -43,6 +43,23 @@ var BillVersion = Backbone.Model.extend({
         return this.get("senateBillNo").match(/[A-Z][0-9]{1,5}-[0-9]{4}/);
     },
 
+    // Bill diff
+    // here we need to pass in 2 different items, and get back the pretty html diff.
+    // args
+    // a = origin string
+    // b = modified string 
+    // pretty = boolian to return html or array
+
+    getBillDiff : function(a,b,pretty){
+        // this is basic
+        var dmp = new diff_match_patch();
+        var ds = dmp.diff_main(a, b, false);
+        if(pretty){
+            var ds = dmp.diff_prettyHtml(ds);
+        }
+        return ds;
+    },
+
     // Assuming the current bill model is a "root" bill as defined by the function
     // isRootBillVersion() then we generate a new Collection of models fetching their data
     // remember though that the fetch is just a wrapper around an ajax call. this means
@@ -57,19 +74,21 @@ var BillVersion = Backbone.Model.extend({
     getBillVersionAmendmentsAsCollection : function(){
 	if( this.isRootBillVersion() ){
 	    var c = new BillVersion_Collection();
-
-	    // this is kind of ugly,  because we can't get a url that will give us the
+        
+        // console.log(this.getBillDiff('two','one two',true));
+	    
+        // this is kind of ugly,  because we can't get a url that will give us the
 	    // json,  and we've already fetched the data from our initial bill we make
 	    // a copy of the new bill to remain consistent,  all of this will go away
 	    // once we get a chance to pull in collection data correctly
 	    var root_bill = new BillVersion({
-		id : this.get("id") 
+		  id : this.get("id") 
 	    });
 	    c.push(root_bill);
 
 	    _.each( this.get("amendments"), function( bill_id ){
 		var m = new BillVersion({
-		    id : bill_id
+		  id : bill_id
 		});
 		c.push(m);
 	    }.bind(this));
@@ -82,7 +101,7 @@ var BillVersion = Backbone.Model.extend({
     // where the resource is located.
 
     url: function(){
-	return  "http://open.nysenate.gov/legislation/2.0/bill/" + this.get("id") + ".jsonp";
+	   return  "http://open.nysenate.gov/legislation/2.0/bill/" + this.get("id") + ".jsonp";
     },
 
     // backbone was originally designed to work with a Rails style REST implementation.  It has more general
