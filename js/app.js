@@ -313,7 +313,7 @@ jQuery(document).ready(function(){
 
 
             getBillData(bill_id, function(data) {
-                
+
                 if (data.response.metadata.totalresults == '0') {
                     alert('No Bills Match');
                     return false;
@@ -370,20 +370,33 @@ function BillDiff(a,b,pretty){
 
 function Bill(data) {
 
-    console.log(data);
-
     // Merge objects
     for (key in data) {
         this[key] = data[key];
     }
     // console.log(data)
 
-    // Amendments
+
+    // Get Amendment info
+    this.amendments = [];
     for(bkey in data.amendments) {
         var amendmentID = data.amendments[bkey]
-        console.log(amendmentID)
+
+        var thisBill = this;
+        getBillData(amendmentID, function(data) {
+
+            var results = data.response.results;
+
+            // Iterate over matching bills
+            for(key in results) {
+                // console.log(results[key].data.bill);
+                thisBill.amendments.push(results[key].data.bill);
+            }
+        });
+
+        
     }
-   
+   console.log(this)
 }
 Bill.prototype.example = 'ex';
 Bill.prototype.render = function(){
