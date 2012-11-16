@@ -46,7 +46,7 @@ var BillVersion = Backbone.Model.extend({
 
     isRootBillVersion : function(){
 	// this is crapy
-	if(this.get("amendments") && this.get("amendments") > 1){	    
+	if(this.get("amendments") && this.get("amendments").length > 1){	    
 	    return this.get("amendments").length;
 	}
 	return false;
@@ -65,13 +65,24 @@ var BillVersion = Backbone.Model.extend({
 
     getBillVersionAmendmentsAsCollection : function(){
 	if( this.isRootBillVersion() ){
-	    c = new BillVersion_Collection();
-	    _.each( this.get("amendments"), function( id ){
-		var m = new BillVersion;
-		m.set("id", id);
-		m.fetch();
+	    var c = new BillVersion_Collection();
+
+	    // this is kind of ugly,  because we can't get a url that will give us the
+	    // json,  and we've already fetched the data from our initial bill we make
+	    // a copy of the new bill to remain consistent,  all of this will go away
+	    // once we get a chance to pull in collection data correctly
+	    var root_bill = new BillVersion({
+		id : this.get("id") 
+	    });
+	    c.push(root_bill);
+
+	    _.each( this.get("amendments"), function( bill_id ){
+		var m = new BillVersion({
+		    id : bill_id
+		});
 		c.push(m);
 	    }.bind(this));
+
 	    return c;
 	}
     },
@@ -163,7 +174,7 @@ var BillVersion_View = Backbone.View.extend({
 
     render: function () {
 	var tmpl = _.template(this.template);	
-	$(this.el).append(tmpl(this.model.toJSON()));
+	$(this.el).html(tmpl(this.model.toJSON()));
 	return this;
     }
 });
@@ -174,25 +185,64 @@ var BillVersion_View = Backbone.View.extend({
 // 'this.model.bind('change',this.render)'  line in the model view initializer
 
 var BillVersion_Collection_View = Backbone.View.extend({
-    el: $("#contacts"),
 
     initialize: function () {
-	this.collection = new BillVersion_Collection(realBills);
-	this.render();
+	this._views = [];
     },
 
+    
+    renderLastN : function(number){
+	this.$el.empty();
+	for( var i = number; i > 0; i--){
+	    var model_id = this.collection.at( this.collection.length - i ).get("id");	
+	    this.$el.append("<article id='" + model_id + "' class='contact-container'>")
+	    var view = new BillVersion_View({
+		model: this.collection.get(model_id),
+		el : "#" + model_id
+	    });
+
+	    // this assumes the model has not already be fetched which
+	    // is bad practice, if it has been fetched and nothing has
+	    // changed,  there will be no "change" event and so nothing
+	    // will be rendered,  that will need to be resolved definately.
+	    
+	    this.collection.get(model_id).fetch();
+	}
+	
+    },
+    
     render: function () {
-	var that = this;
-    var i =0;
+	if( !this._views.length ){
+	    this.collection.each( function(item) {
+		// create a container and append it for the view that we're about to create/render
+		this.$el.append("<article id='" + item.get("id") + "' class='contact-container'>")
 
-	// This is where we'd do the diff?
+		// create the view for the model
+		var billView = new BillVersion_View({
+		    model: item,
+		    el : "#" + item.get("id"),
+		});
 
-    _.each(this.collection.models, function (item) {
-        that.renderBillVersion(item);
-        
-    }, this);
- 
+		// add the view so we have access to it later
+		this._views.push( billView );
+
+		// Go out and get the actual model data - this should
+		// trigger the view's render function when it gets that
+		// 'change' event that we bind to in the view's initization
+		// funciton (mm... programing in asynchronous environments)
+		item.fetch();
+
+
+	    }.bind(this));
+	} else {
+
+	    // assume that if we've alredy got the views,  we've already got the
+	    // models so just fetch/render them - this could lead to bugs though...
+	    _.each(this._views, function(view){ view.model.fetch() });
+	}
+	return this;
     },
+
 
     renderBillVersion: function (item) {
 	var billView = new BillVersion_View({
@@ -206,6 +256,10 @@ var BillVersion_Collection_View = Backbone.View.extend({
  *  This is the code that gets the whole ball rolling.
  */
 
+var b;
+var bill_collection
+var bill_collection_view
+
 jQuery(document).ready(function(){
 
     // pull the bill ID from the input element
@@ -215,16 +269,34 @@ jQuery(document).ready(function(){
     // submit event and run this code instead.
 
     if( $('[name=bill-id]').val() ){
-	var b = new BillVersion({
+	b = new BillVersion({
 	    id : $('[name=bill-id]').val()
 	});
 
-	var billView = new BillVersion_View({
+
+	// technically we would want to bootstrap this data from the server
+	// that would resolve quite a few little ugly hacks that we're going to
+	// encounter
+
+	b.bind("change", function(){
+	    bill_collection = b.getBillVersionAmendmentsAsCollection();
+	    bill_collection_view = new BillVersion_Collection_View({
+		el : "#contacts",		
+		collection : bill_collection
+	    });
+	    
+	    bill_collection_view.renderLastN(2);
+	}.bind(b));
+
+	b.fetch();	
+
+/*
+	billView = new BillVersion_View({
 	    model : b,
 	    el : "#contacts"
 	});
+*/
 
-	b.fetch();	
     }
 
 });
