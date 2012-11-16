@@ -33,23 +33,14 @@ var BillVersion_Collection = Backbone.Collection.extend({
 //define product model
 var BillVersion = Backbone.Model.extend({
     defaults: {
-	
+
     },
 
-    // This does a rudimentary check to see if the amendments data
-    // has more than one element.  if it does then we can assume
-    // that it is a 'root' bill version,  which is to say,  it knows about
-    // all children bill versions.
-    //
-    // I don't know if this accurately reflects the nature of the domain though 
-    // - Chris (11/12/25)
-
     isRootBillVersion : function(){
-	// this is crapy
-	if(this.get("amendments") && this.get("amendments").length > 1){	    
-	    return this.get("amendments").length;
-	}
-	return false;
+        // Amendments are lettered. Root bills don't have these letters.
+        //     Root Bill: S7033 -2011
+        //     Amendment: S7033B-2011
+        return this.get("senateBillNo").match(/[A-Z][0-9]{1,5}-[0-9]{4}/);
     },
 
     // Assuming the current bill model is a "root" bill as defined by the function
