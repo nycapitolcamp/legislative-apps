@@ -400,9 +400,18 @@ function Bill(data) {
     }
    console.log(this)
 }
-Bill.prototype.template ()
-Bill.prototype.example = 'ex';
+
+Bill.prototype.template = $("#billTemplate").html();
 Bill.prototype.render = function(){
     
-};
+    this.difftext = BillDiff('one', 'one two', true);
 
+    
+    var tmpl = _.template(this.template);   
+    $('#billTemplate').html(tmpl(this.data));
+
+    return this;
+ 
+    console.log(this.difftext);
+
+};
