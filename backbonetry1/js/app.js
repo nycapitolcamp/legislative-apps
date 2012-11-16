@@ -134,7 +134,11 @@ var BillVersion = Backbone.Model.extend({
  *  Frontend Views
  */
 
-//define individual contact view
+// This is the view for instances of BillVersion Models
+// it should only ever worry about displaying the actual data for
+// a single BillVersion - never a collection of bill versions
+// that is what the BillVersion_Collection_View is for
+
 var BillVersion_View = Backbone.View.extend({
     template: $("#billTemplate").html(),
     
@@ -165,8 +169,12 @@ var BillVersion_View = Backbone.View.extend({
     }
 });
 
-//define master view
-var BillVersion_CollectionView = Backbone.View.extend({
+// This view will be responsible for instantiating individual model views
+// and then calling 'render' on each one.  after they have been rendered
+// then changes to the model will automatically be re-rendered because of the
+// 'this.model.bind('change',this.render)'  line in the model view initializer
+
+var BillVersion_Collection_View = Backbone.View.extend({
     el: $("#contacts"),
 
     initialize: function () {
