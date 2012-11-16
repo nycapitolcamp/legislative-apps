@@ -312,7 +312,27 @@ jQuery(document).ready(function(){
             // billVersion.fetch();
 
 
-            getBillData(bill_id);
+            getBillData(bill_id, function(data) {
+                
+                if (data.response.metadata.totalresults == '0') {
+                    alert('No Bills Match');
+                    return false;
+                }   
+
+                var results = data.response.results;
+
+                if (results) {
+
+                    // Iterate over matching bills
+                    for(key in results) {
+
+                        var billData = results[key].data.bill;
+
+                        // CREATE NEW BILL
+                        var bill = new Bill(billData);    
+                    }
+                }
+            });
 
             return false;
         }
@@ -321,7 +341,7 @@ jQuery(document).ready(function(){
 
 
 
-function getBillData(billID) {
+function getBillData(billID, callback) {
 
     var url = "http://open.nysenate.gov/legislation/2.0/bill/" + billID + ".jsonp";
 
@@ -331,28 +351,7 @@ function getBillData(billID) {
         dataType: 'jsonp',
         url: url,
         success: function(data) {
-
-            if (data.response.metadata.totalresults == '0') {
-                alert('No Bills Match');
-                return false;
-            }   
-
-            var results = data.response.results;
-
-            if (results) {
-
-                // Iterate over matching bills
-                for(key in results) {
-
-                    var billData = results[key].data.bill;
-
-                    // CREATE NEW BILL
-                    var bill = new Bill(billData);
-
-                    
-                }
-            }
-
+            callback(data);
         },
         processData: false,
     });
