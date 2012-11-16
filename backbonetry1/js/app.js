@@ -259,6 +259,9 @@ var BillVersion_Collection_View = Backbone.View.extend({
  *  This is the code that gets the whole ball rolling.
  */
 
+
+// Note:  these are here to facilitate in browser manipulation
+//        eventually they should be moved into the .ready closure
 var b;
 var bill_collection
 var bill_collection_view
@@ -292,13 +295,6 @@ jQuery(document).ready(function(){
 	}.bind(b));
 
 	b.fetch();	
-
-/*
-	billView = new BillVersion_View({
-	    model : b,
-	    el : "#contacts"
-	});
-*/
 
     }
 
