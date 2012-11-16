@@ -380,6 +380,7 @@ function Bill(data) {
 
     // Get Amendment info
     this.amendments = [];
+    this.numAmendments = 0
     for(bkey in data.amendments) {
         var amendmentID = data.amendments[bkey]
 
@@ -394,23 +395,29 @@ function Bill(data) {
                 thisBill.amendments.push(results[key].data.bill);
                 thisBill.amendments[thisBill.amendments.length] = results[key].data.bill;
             }
+
+            // Wait till we have all the amendments
+            if (thisBill.numAmendments == thisBill.amendments.length+1) {                
+               thisBill.render();
+            }
         });
+
+        this.numAmendments++;
 
         
     }
-   console.log(this)
 }
 
 Bill.prototype.template = $("#billTemplate").html();
 Bill.prototype.render = function(){
     
-    this.difftext = BillDiff('one', 'one two', true);
+    this.difftext = BillDiff(this.fulltext, this.amendments[0].fulltext, true);
 
     
     var tmpl = _.template(this.template);   
-    $('#billTemplate').html(tmpl(this.data));
+    var view = $("<article class='bill-container'>").html(tmpl({difftext:this.difftext}));
+    $('#bills').html(view);
 
-    return this;
  
     console.log(this.difftext);
 
