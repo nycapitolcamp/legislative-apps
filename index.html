@@ -31,76 +31,10 @@
 			
 				
 		
-    <header>
-        <h2>Authorizes the creation of certain local civil administrative enforcement bureaus</h2>
-        <p class="subtitle">
-            <span class="law-section"><%= lawSection %></span>
-            <span class="bill-number"><%= senateBillNo %></span>
-        </p>
-        <div class="detail collapsible">
-            <a href="" class="btn toggle">Show / Hide Details</a>
-            <div class="collapse">
-                <dl>
-
-                <%= votes %>
-
-                    <dt>Year</dt>
-                    <dd><%= year %></dd>
-
-                    <dt>Law</dt>
-                    <dd><%= law %></dd>
-
-                    <dt>Same As</dt>
-                    <dd><%= sameAs %></dd>
-
-                    <dt>Previous Versions</dt>
-                    <dd>
-                        <ul class="previousVersions">
-                            <% for(var previousVersion in previousVersions) { %>
-                                <li><%= previousVersions[previousVersion] %></li>
-                            <% } %>
-                        </ul>
-                    </dd>
-
-                    <dt>Sponsor</dt>
-                    <dd>
-                        <ul class="sponsor">
-                            <% for(var key in sponsor) { %>
-                                <li><strong><%= key %></strong>: <%= sponsor[key] %></li>
-                            <% } %>
-                        </ul>
-                    </dd>
-
-                    <dt>Summary</dt>
-                    <dd><%= summary %></dd>
-
-
-                    <dt>Current Committee</dt>
-                    <dd><%= currentCommittee %></dd>
-
-                    <dt>Actions</dt>
-                    <dd>
-                        <ul class="actions">
-                        <% for(var action in actions) { %>
-                            <li>
-                                <%= actions[action]['text'] %>
-                            </li>
-                        <% } %>
-                        
-                        </ul>
-                    </dd>
-
-                    <dt>Memo</dt>
-                    <dd><%= memo %></dd>
-                </dl>
-                
-            </div>
-        </div>
-    </header>
-
+  
          
     <div class="content">
-    <%= fulltext %>
+    <%= difftext %>
     </div>
 
 
