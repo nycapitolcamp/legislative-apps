@@ -189,24 +189,27 @@ var BillVersion_Collection_View = Backbone.View.extend({
     initialize: function () {
 	this._views = [];
     },
-
     
+    // This should render the last N items in the collection    
     renderLastN : function(number){
 	this.$el.empty();
 	for( var i = number; i > 0; i--){
-	    var model_id = this.collection.at( this.collection.length - i ).get("id");	
-	    this.$el.append("<article id='" + model_id + "' class='contact-container'>")
-	    var view = new BillVersion_View({
-		model: this.collection.get(model_id),
-		el : "#" + model_id
-	    });
+	    // haha - boundary checking, what is this C?
+	    if( this.collection.at( this.collection.length - i ) ){
+		var model_id = this.collection.at( this.collection.length - i ).get("id");	
+		this.$el.append("<article id='" + model_id + "' class='contact-container'>")
+		var view = new BillVersion_View({
+		    model: this.collection.get(model_id),
+		    el : "#" + model_id
+		});
 
-	    // this assumes the model has not already be fetched which
-	    // is bad practice, if it has been fetched and nothing has
-	    // changed,  there will be no "change" event and so nothing
-	    // will be rendered,  that will need to be resolved definately.
-	    
-	    this.collection.get(model_id).fetch();
+		// this assumes the model has not already be fetched which
+		// is bad practice, if it has been fetched and nothing has
+		// changed,  there will be no "change" event and so nothing
+		// will be rendered,  that will need to be resolved definately.
+		
+		this.collection.get(model_id).fetch();
+	    }
 	}
 	
     },
