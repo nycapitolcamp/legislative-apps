@@ -277,7 +277,7 @@ jQuery(document).ready(function(){
 
     $.urlParam = function(name, default_value) {
         var results = new RegExp('[\\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
-        return results[1] || default_value;
+        return (results != null) ? results[1] : default_value;
     }
 
     bill_input.val($.urlParam('bill-id','S7033-2011'));
