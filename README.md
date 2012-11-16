@@ -10,9 +10,9 @@ Open Legislation
 
 [Open Legislation Codebase](https://github.com/nysenate/OpenLegislation/)
 
-[API Documentationn](http://openlegislation.readthedocs.org/en/latest/)
+[API Documentation](http://openlegislation.readthedocs.org/en/latest/)
 
-[Alternative Leg Info](http://leginfo.state.ny.us/INDEX3.html)
+Alternative Leg Info - [onsite](http://leginfo.state.ny.us/) and [offsite](http://public.leginfo.state.ny.us)
 
  <h1 id='Bill'>Bill Diff</div>
 
