@@ -1,4 +1,4 @@
-﻿jQuery(document).ready(function(){
+jQuery(document).ready(function(){
 
     var bill_form = $('#getbill');
     var bill_input = $('[name=bill-id]');
@@ -45,7 +45,7 @@
                 if (data.response.metadata.totalresults == '0') {
                     alert('No Bills Match');
                     return false;
-                }   
+                }
 
                 var results = data.response.results;
 
@@ -57,7 +57,7 @@
                         var billData = results[key].data.bill;
 
                         // CREATE NEW BILL
-                        var bill = new Bill(billData);    
+                        var bill = new Bill(billData);
                     }
                 }
             });
@@ -133,40 +133,79 @@ function Bill(data) {
                 thisBill.amendments.push(results[key].data.bill);
                 thisBill.amendments[thisBill.amendments.length-1] = results[key].data.bill;
             }
-            
+
             // Wait till we have all the amendments
-            if (thisBill.numAmendments == thisBill.amendments.length) {                
+            if (thisBill.numAmendments == thisBill.amendments.length) {
                thisBill.render();
             }
         });
-        
 
-        
+
+
     }
 }
+
+
+var clean_text_formatting = function(messy_text){
+    var cleaned_lines = []
+    var dirty_lines = messy_text.split(/\r?\n/)
+    var i = 0;
+    do {
+        var line = dirty_lines[i];
+        // Skip the page breaks:
+        //
+        //  EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets
+        //                       [ ] is old law to be omitted.
+        //                                                            LBD00121-02-1
+        //
+        // S. 39                               2
+        //
+        if (line.match(/EXPLANATION--Matter in ITALICS \(underscored\)/)) {
+            cleaned_lines.pop() // Skip the leading blank line
+
+            do { // Skip all the lines in between..
+                i+=1;
+                if (i >= dirty_lines.length) {
+                    break;
+                } else {
+                    line = dirty_lines[i];
+                }
+            } while (!line.match(/[A-Z]\. [0-9]{1,5}/));
+            i++; // Skip the trailing blank line
+
+        } else {
+            // Remove the leading white-space and line numbers
+            cleaned_lines.push(line.replace(/^[0-9 ]{7}/, "").replace(/([^ ]) +/g,'$1 '));
+        }
+        i++;
+    } while (i < dirty_lines.length);
+    return cleaned_lines.join('\n');
+}
+
 
 Bill.prototype.template = $("#billTemplate").html();
 Bill.prototype.diffstatstemplate = $("#diffstatsTemplate").html();
 Bill.prototype.render = function(){
     console.log('reader');
-    
-    var dmp = new diff_match_patch();
 
-    var billDiffs = dmp.diff_main(this.fulltext, this.amendments[0].fulltext,false);
+    var dmp = new diff_match_patch();
+    var bill_original = clean_text_formatting(this.fulltext);
+    var bill_amended = clean_text_formatting(this.amendments[0].fulltext);
+    var billDiffs = dmp.diff_main(bill_original, bill_amended,false);
 
     this.difftext = dmp.diff_prettyHtml(billDiffs);
 
     this.diffstatstext = BillDiffStats(billDiffs);
 
-    var statstmpl = _.template(this.diffstatstemplate);   
+    var statstmpl = _.template(this.diffstatstemplate);
     var statsview = $("<article class='bill-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
     $('#diffstats').empty().html(statsview);
-    
-    var tmpl = _.template(this.template);   
+
+    var tmpl = _.template(this.template);
     var view = $("<article class='bill-container'>").html(tmpl({difftext:this.difftext}));
     $('#bills').empty().html(view);
 
- 
+
     // console.log(this.difftext);
 
 };
