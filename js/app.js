@@ -85,38 +85,23 @@ function getBillData(billID, callback) {
     });
 }
 
-function BillDiff(a,b,pretty){
-    // this is basic
-    var dmp = new diff_match_patch();
-    var ds = dmp.diff_main(a, b, false);
-    if(pretty){
-        var ds = dmp.diff_prettyHtml(ds);
-    }
-    return ds;
-}
-
-function BillDiffStats(a,b){
+function BillDiffStats(diffs){
     /** Definitions from diff_match_patch **/
     var DIFF_DELETE = -1;
     var DIFF_INSERT = 1;
     var DIFF_EQUAL = 0;
 
-    // this is a duplication of the difference computation...
-    // it will be nice not to have to do it again..
-    var dmp = new diff_match_patch();
-    var ds = dmp.diff_main(a, b, false);
-
     var insertions = 0;
     var deletions = 0;
     var unchanged = 0;
 
-    for(var i=0; i<ds.length; i++){
-     if(ds[i][0]==DIFF_EQUAL) unchanged=unchanged+1;
-     if(ds[i][0]==DIFF_DELETE) deletions=deletions+1;
-     if(ds[i][0]==DIFF_INSERT) insertions=insertions+1;
+    for(var i=0; i<diffs.length; i++){
+     if(diffs[i][0]==DIFF_EQUAL) unchanged=unchanged+1;
+     if(diffs[i][0]==DIFF_DELETE) deletions=deletions+1;
+     if(diffs[i][0]==DIFF_INSERT) insertions=insertions+1;
     }
 
-    var summarystats = 'Total Lines = '+ds.length+'   Unchanged: '+unchanged+'   Deleted: '+deletions+'   Inserted: '+insertions;
+    var summarystats = 'Total Lines = '+diffs.length+'   Unchanged: '+unchanged+'   Deleted: '+deletions+'   Inserted: '+insertions;
     return summarystats;
 }
 
@@ -164,9 +149,14 @@ Bill.prototype.template = $("#billTemplate").html();
 Bill.prototype.diffstatstemplate = $("#diffstatsTemplate").html();
 Bill.prototype.render = function(){
     console.log('reader');
-    this.difftext = BillDiff(this.fulltext, this.amendments[0].fulltext, true);
+    
+    var dmp = new diff_match_patch();
 
-    this.diffstatstext = BillDiffStats(this.fulltext, this.amendments[0].fulltext);
+    var billDiffs = dmp.diff_main(this.fulltext, this.amendments[0].fulltext,false);
+
+    this.difftext = dmp.diff_prettyHtml(billDiffs);
+
+    this.diffstatstext = BillDiffStats(billDiffs);
 
     var statstmpl = _.template(this.diffstatstemplate);   
     var statsview = $("<article class='bill-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
