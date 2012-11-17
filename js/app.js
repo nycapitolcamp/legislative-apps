@@ -105,6 +105,29 @@ function BillDiffStats(diffs){
     return summarystats;
 }
 
+function format_bill_diffs(diffs) {
+    var html = [];
+    for (var x = 0; x < diffs.length; x++) {
+        var text = diffs[x][1].replace(/&/g, '&amp;')
+                              .replace(/</g, '&lt;')
+                              .replace(/>/g, '&gt;')
+                              .replace(/\n/g, '<br>');
+        switch (diffs[x][0]) {
+            case DIFF_INSERT:
+                html.push('<ins style="background:#e6ffe6;">' + text + '</ins>');
+                break;
+            case DIFF_DELETE:
+                html.push('<del style="background:#ffe6e6;">' + text + '</del>');
+                break;
+            case DIFF_EQUAL:
+                html.push('<span>' + text + '</span>');
+                break;
+        }
+    }
+    return html.join('');
+};
+
+
 function Bill(data) {
 
     // Merge objects
@@ -193,7 +216,7 @@ Bill.prototype.render = function(){
     var bill_amended = clean_text_formatting(this.amendments[0].fulltext);
     var billDiffs = dmp.diff_main(bill_original, bill_amended,false);
     dmp.diff_cleanupSemantic(billDiffs);
-    this.difftext = dmp.diff_prettyHtml(billDiffs);
+    this.difftext = format_bill_diffs(billDiffs);
 
     this.diffstatstext = BillDiffStats(billDiffs);
 
