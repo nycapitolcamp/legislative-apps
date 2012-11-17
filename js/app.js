@@ -95,19 +95,27 @@ function BillDiff(a,b,pretty){
     return ds;
 }
 
-function BillDiffStats(ds){
+function BillDiffStats(a,b){
     /** Definitions from diff_match_patch **/
     var DIFF_DELETE = -1;
     var DIFF_INSERT = 1;
     var DIFF_EQUAL = 0;
+
+    // this is a duplication of the difference computation...
+    // it will be nice not to have to do it again..
+    var dmp = new diff_match_patch();
+    var ds = dmp.diff_main(a, b, false);
+
     var insertions = 0;
     var deletions = 0;
     var unchanged = 0;
+
     for(var i=0; i<ds.length; i++){
      if(ds[i][0]==DIFF_EQUAL) unchanged=unchanged+1;
-     if(ds[i][0]==DIFF_INSERT) insertions=insertions+1;
      if(ds[i][0]==DIFF_DELETE) deletions=deletions+1;
+     if(ds[i][0]==DIFF_INSERT) insertions=insertions+1;
     }
+
     var summarystats = 'Total Lines = '+ds.length+'   Unchanged: '+unchanged+'   Deleted: '+deletions+'   Inserted: '+insertions;
     return summarystats;
 }
@@ -158,7 +166,7 @@ Bill.prototype.render = function(){
     console.log('reader');
     this.difftext = BillDiff(this.fulltext, this.amendments[0].fulltext, true);
 
-    this.diffstatstext = BillDiffStats(this.difftext);
+    this.diffstatstext = BillDiffStats(this.fulltext, this.amendments[0].fulltext);
 
     var statstmpl = _.template(this.diffstatstemplate);   
     var statsview = $("<article class='bill-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
