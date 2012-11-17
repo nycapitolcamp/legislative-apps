@@ -192,7 +192,7 @@ Bill.prototype.render = function(){
     var bill_original = clean_text_formatting(this.fulltext);
     var bill_amended = clean_text_formatting(this.amendments[0].fulltext);
     var billDiffs = dmp.diff_main(bill_original, bill_amended,false);
-
+    dmp.diff_cleanupSemantic(billDiffs);
     this.difftext = dmp.diff_prettyHtml(billDiffs);
 
     this.diffstatstext = BillDiffStats(billDiffs);
