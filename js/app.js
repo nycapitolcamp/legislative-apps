@@ -89,7 +89,13 @@ function BillDiff(a,b,pretty){
     // this is basic
     var dmp = new diff_match_patch();
     var ds = dmp.diff_main(a, b, false);
-    var jsonStr = JSON.stringify(ds);
+    if(pretty){
+        var ds = dmp.diff_prettyHtml(ds);
+    }
+    return ds;
+}
+
+function BillDiffStats(ds){
     /** Definitions from diff_match_patch **/
     var DIFF_DELETE = -1;
     var DIFF_INSERT = 1;
@@ -101,14 +107,10 @@ function BillDiff(a,b,pretty){
      if(ds[i][0]==DIFF_EQUAL) unchanged=unchanged+1;
      if(ds[i][0]==DIFF_INSERT) insertions=insertions+1;
      if(ds[i][0]==DIFF_DELETE) deletions=deletions+1;
-     }
-    alert('Total lines = '+ds.length+'\n unchanged '+unchanged+'\n deleted '+deletions+'\n inserted '+insertions);
-    if(pretty){
-        var ds = dmp.diff_prettyHtml(ds);
     }
-    return ds;
+    var summarystats = 'Total Lines = '+ds.length+'   Unchanged: '+unchanged+'   Deleted: '+deletions+'   Inserted: '+insertions;
+    return summarystats;
 }
-
 
 function Bill(data) {
 
@@ -151,10 +153,16 @@ function Bill(data) {
 }
 
 Bill.prototype.template = $("#billTemplate").html();
+Bill.prototype.diffstatstemplate = $("#diffstatsTemplate").html();
 Bill.prototype.render = function(){
     console.log('reader');
     this.difftext = BillDiff(this.fulltext, this.amendments[0].fulltext, true);
 
+    this.diffstatstext = BillDiffStats(this.difftext);
+
+    var statstmpl = _.template(this.diffstatstemplate);   
+    var statsview = $("<article class='bill-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
+    $('#diffstats').empty().html(statsview);
     
     var tmpl = _.template(this.template);   
     var view = $("<article class='bill-container'>").html(tmpl({difftext:this.difftext}));
