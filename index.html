@@ -24,24 +24,36 @@
 
             <div id="bills">
 
+            </div>
+
+			
+            <div id="diffstats">
 
             </div>
 
-		<script id="billTemplate" type="text/template">
-			
 				
 		
-  
-         
-    <div class="content">
-    <%= difftext %>
+          
+    <script id="billTemplate" type="text/template">
+
+      <div class="content">
+      <%= difftext %>
+      </div>
+
+    </script>
+        
+ 
+    <script id="diffstatsTemplate" type="text/diffstatstemplate">
+
+      <div class="content">
+      <%= diffstatstext %>
+      </div>
+
+    </script>
+
+
     </div>
 
-
-        </script>
-        
-
-        </div>
         <script src="js/jquery-1.7.1.min.js"></script>
         <script src="js/json2.js"></script>
         <script src="js/underscore-min.js"></script>
