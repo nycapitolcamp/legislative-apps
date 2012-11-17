@@ -36,7 +36,7 @@ body {
   display: none;
 }
 .bill-container {
-  width: 47%;
+  /*width: 47%;*/
   margin-right: 2%;
   float: left;
   position: relative;
