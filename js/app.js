@@ -2,6 +2,7 @@ jQuery(document).ready(function(){
 
     var bill_form = $('#getbill');
     var bill_input = $('[name=bill-id]');
+    var diff_input = $('[name=diff-against]');
 
     $.urlParam = function(name, default_value) {
         var results = new RegExp('[\\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
@@ -9,12 +10,12 @@ jQuery(document).ready(function(){
     }
 
     bill_input.val($.urlParam('bill-id','S7033-2011'));
-
     bill_form.bind("submit", function() {
 
         // pull the bill ID from the input element
         // TODO: Verify that the input is valid first
         var bill_id = bill_input.val();
+        var diff_type = diff_input.val();
         if( bill_id) {
 
             // Try to strip the amendment version from in the input string
@@ -55,6 +56,7 @@ jQuery(document).ready(function(){
                     for(key in results) {
 
                         var billData = results[key].data.bill;
+                        billData['type'] = diff_type; // not sure how to better pass this, but this works for now
 
                         // CREATE NEW BILL
                         var bill = new Bill(billData);
@@ -100,12 +102,26 @@ function BillDiffStats(diffs){
      if(diffs[i][0]==DIFF_DELETE) deletions=deletions+diffs[i][1].split(/\s+/).length;
      if(diffs[i][0]==DIFF_INSERT) insertions=insertions+diffs[i][1].split(/\s+/).length;
     }
-// 
+
     var summarystats = 'Total Words = '+(unchanged+deletions+insertions)+'<br/>   Unchanged: '+unchanged+'<br/>   <span class="deleted_text">Deleted: '+deletions+'</span><br/>   <span class="added_text">Inserted: '+insertions+'</span>';
     return summarystats;
 }
 
+// in the bill there are areas that are formatted to indicate changes in the law (UPPPERCASE for additions, [bracketed] for deletions), Here we transform them to standard diff output
+function format_bill_plaintext_diffs(diffs) {
+    var text = diffs.replace(/&/g, '&amp;')
+           .replace(/</g, '&lt;')
+           .replace(/>/g, '&gt;')
+           .replace(/\n/g, '<br/>')
+            .replace(/((?:[0-9A-Z()-]+)(?:([,:;. '"]|{br})+)((?:[0-9A-Z()-]+)(?:([,:;. '"]|{br})+)?)+)(?=(?:([,:;. '"]|{br})+)|$)/g, '<span class="added_text">$1</span>')
+            .replace(/\[/g, '<span class="deleted_text">')
+            .replace(/\]/g, '</span>');
+    return text;
+}
+
 function format_bill_diffs(diffs) {
+
+
     var ignore_white_space = false;
     var html = [];
     var cursor = 0;
@@ -220,7 +236,7 @@ var clean_text_formatting = function(messy_text){
             fixed_line = fixed_line.replace(/([^ ]) +/g,'$1 ');
 
 
-            console.log(fixed_line)
+            // console.log(fixed_line)
             cleaned_lines.push(fixed_line);
         }
         i++;
@@ -233,22 +249,29 @@ Bill.prototype.template = $("#billTemplate").html();
 Bill.prototype.diffstatstemplate = $("#diffstatsTemplate").html();
 Bill.prototype.render = function(){
     console.log('reader');
-
-    var dmp = new diff_match_patch();
+    console.log(this.type);
     var bill_original = clean_text_formatting(this.fulltext);
-    var bill_amended = clean_text_formatting(this.amendments[0].fulltext);
-    var billDiffs = dmp.diff_main(bill_original, bill_amended,false);
-    dmp.diff_cleanupSemantic(billDiffs);
-    this.difftext = format_bill_diffs(billDiffs);
 
-    this.diffstatstext = BillDiffStats(billDiffs);
+    if(this.type == "previous"){
+        var dmp = new diff_match_patch();
+        var bill_amended = clean_text_formatting(this.amendments[0].fulltext);
+        var billDiffs = dmp.diff_main(bill_original, bill_amended,false);
+        dmp.diff_cleanupSemantic(billDiffs);
+        this.difftext = format_bill_diffs(billDiffs);
+        this.diffstatstext = BillDiffStats(billDiffs);
+        var statstmpl = _.template(this.diffstatstemplate);
+        var statsview = $("<article class='diffstats-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
+        $('#diffstats').empty().html(statsview);
+
+    }else{
+        this.difftext = format_bill_plaintext_diffs(bill_original);
+    }
+   
+
    var tmpl = _.template(this.template);
     var view = $("<article class='bill-container'>").html(tmpl({difftext:this.difftext}));
     $('#bills').empty().html(view);
-
-    var statstmpl = _.template(this.diffstatstemplate);
-    var statsview = $("<article class='diffstats-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
-    $('#diffstats').empty().html(statsview);
-
+    
+   
  
 };
