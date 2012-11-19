@@ -134,7 +134,8 @@ textarea {
 
 ins,
 span[class*="added_text_rev_"],
-.added_text_rev_1
+.added_text_rev_1,
+.added_text
 {
 	background: #e6ffe6;
 	text-decoration: underline;
@@ -142,7 +143,8 @@ span[class*="added_text_rev_"],
 
 del,
 span[class*="deleted_text_rev_"],
-.deleted_text_rev_1
+.deleted_text_rev_1,
+.deleted_text
 {
 	background: #ffe6e6;
 	text-decoration: line-through;
