@@ -1,59 +1,41 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Backbone.js Web App</title>
+        <title>Diff View</title>
 
         <link rel="stylesheet" href="css/main.css" />
         <link rel="stylesheet" href="css/screen.css" />
 
     </head>
     <body>
-        <div class='main'>
+        <div class='header'>
+            <form id="getbill">
+                Get Bill: <input type="text" name="bill-id" value="S7033-2011"> <input type="submit" >
+            </form> 
+        </div>                  
 
-            <header class="site-header">
-                <div class='mid-header'>
-                    <img class='logo' src="img/openwordlogo.png" />
-                    <span class='logo-title'>Legislation Diff Tool</span>
+        <div id="diffstats">
+        </div>
 
-                    <form id="getbill">
-                        Get Bill: <input type="text" name="bill-id" value="S7033-2011"> <input type="submit" >
-                    </form>
-                <div>
+        <div id="bills">
+        </div>
 
-            </header>                   
+        <script id="diffstatsTemplate" type="text/diffstatstemplate">
 
-            <div id="bills">
+          <div class="content">
+          <%= diffstatstext %>
+          </div>
 
-            </div>
+        </script>      
+        <script id="billTemplate" type="text/template">
 
-			
-            <div id="diffstats">
+          <div class="content">
+          <%= difftext %>
+          </div>
 
-            </div>
+        </script>
 
-				
-		
-          
-    <script id="billTemplate" type="text/template">
-
-      <div class="content">
-      <%= difftext %>
-      </div>
-
-    </script>
-        
- 
-    <script id="diffstatsTemplate" type="text/diffstatstemplate">
-
-      <div class="content">
-      <%= diffstatstext %>
-      </div>
-
-    </script>
-
-
-    </div>
-
+        </div>
         <script src="js/jquery-1.7.1.min.js"></script>
         <script src="js/json2.js"></script>
         <script src="js/underscore-min.js"></script>

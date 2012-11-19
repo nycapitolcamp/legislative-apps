@@ -96,27 +96,35 @@ function BillDiffStats(diffs){
     var unchanged = 0;
 
     for(var i=0; i<diffs.length; i++){
-     if(diffs[i][0]==DIFF_EQUAL) unchanged=unchanged+1;
-     if(diffs[i][0]==DIFF_DELETE) deletions=deletions+1;
-     if(diffs[i][0]==DIFF_INSERT) insertions=insertions+1;
+     if(diffs[i][0]==DIFF_EQUAL) unchanged=unchanged+diffs[i][1].split(/\s+/).length;
+     if(diffs[i][0]==DIFF_DELETE) deletions=deletions+diffs[i][1].split(/\s+/).length;
+     if(diffs[i][0]==DIFF_INSERT) insertions=insertions+diffs[i][1].split(/\s+/).length;
     }
-
-    var summarystats = 'Total Lines = '+diffs.length+'   Unchanged: '+unchanged+'   Deleted: '+deletions+'   Inserted: '+insertions;
+// 
+    var summarystats = 'Total Words = '+(unchanged+deletions+insertions)+'<br/>   Unchanged: '+unchanged+'<br/>   <span class="deleted_text">Deleted: '+deletions+'</span><br/>   <span class="added_text">Inserted: '+insertions+'</span>';
     return summarystats;
 }
 
 function format_bill_diffs(diffs) {
+    var ignore_white_space = false;
     var html = [];
+    var cursor = 0;
     for (var x = 0; x < diffs.length; x++) {
         var text = diffs[x][1].replace(/&/g, '&amp;')
-                              .replace(/</g, '&lt;')
-                              .replace(/>/g, '&gt;')
-                              .replace(/\n/g, '<br>');
-        switch (diffs[x][0]) {
+                               .replace(/</g, '&lt;')
+                               .replace(/>/g, '&gt;')
+                               .replace(/\n/g, '<br/>');
+
+        var diff_type = diffs[x][0];
+        if (ignore_white_space && text.match(/^\s*$/)) {
+            diff_type = DIFF_EQUAL;
+        }
+        switch (diff_type) {
             case DIFF_INSERT:
                 html.push('<span class="added_text">' + text + '</span>');
                 break;
             case DIFF_DELETE:
+            // if( text == "<br/>" ){ text ='';};
                 html.push('<span class="deleted_text">' + text + '</span>');
                 break;
             case DIFF_EQUAL:
@@ -198,11 +206,26 @@ var clean_text_formatting = function(messy_text){
 
         } else {
             // Remove the leading white-space and line numbers
-            cleaned_lines.push(line.replace(/^[0-9 ]{7}/, "").replace(/([^ ]) +/g,'$1 '));
+            original_length = line.length
+            fixed_line = line.replace(/^[0-9 ]{7}/, "");
+            if (fixed_line.length != 72) {
+                fixed_line+='\n'
+            } else {
+                if (fixed_line[71] == '-') {
+                    fixed_line = fixed_line.slice(0,71);
+                } else {
+                    fixed_line += ' ';
+                }
+            }
+            fixed_line = fixed_line.replace(/([^ ]) +/g,'$1 ');
+
+
+            console.log(fixed_line)
+            cleaned_lines.push(fixed_line);
         }
         i++;
     } while (i < dirty_lines.length);
-    return cleaned_lines.join('\n');
+    return cleaned_lines.join('');
 }
 
 
@@ -219,16 +242,13 @@ Bill.prototype.render = function(){
     this.difftext = format_bill_diffs(billDiffs);
 
     this.diffstatstext = BillDiffStats(billDiffs);
-
-    var statstmpl = _.template(this.diffstatstemplate);
-    var statsview = $("<article class='bill-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
-    $('#diffstats').empty().html(statsview);
-
-    var tmpl = _.template(this.template);
+   var tmpl = _.template(this.template);
     var view = $("<article class='bill-container'>").html(tmpl({difftext:this.difftext}));
     $('#bills').empty().html(view);
 
+    var statstmpl = _.template(this.diffstatstemplate);
+    var statsview = $("<article class='diffstats-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
+    $('#diffstats').empty().html(statsview);
 
-    // console.log(this.difftext);
-
+ 
 };

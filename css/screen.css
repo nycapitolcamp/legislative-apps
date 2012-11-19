@@ -1,115 +1,39 @@
-/* Micro ClearFix Mixin */
-.clearfix {
-  zoom: 1;
-}
-.clearfix:before,
-.clearfix:after {
-  content: "";
-  display: table;
-}
-.clearfix:after {
-  clear: both;
-}
+/* Open Legislation Main */
 body {
   font-family: Arial, sans-serif;
 }
-.btn {
-  display: inline-block;
-  text-decoration: none;
-  font-size: 12px;
-  border-radius: 1px;
-  padding: 4px 8px;
-  background: #eee;
-  border: solid 1px #ddd;
+.header {
+  background-color:#dedede;    
 }
-.btn:hover {
-  background: #eaeaea;
-  border: solid 1px #d9d9d9;
-  color: #666;
-}
-.btn:active {
-  background: #dfdfdf;
-  border: solid 1px #ccc;
-  color: #888;
-}
-.collapsible .collapse {
-  display: none;
+#getbill {
+  padding:10px 25px;
+  margin: 0;
 }
 .bill-container {
-  /*width: 47%;*/
-  margin-right: 2%;
   float: left;
   position: relative;
-  left: 2%;
   word-wrap: break-word;
-}
-.bill-container header {
-  zoom: 1;
-  padding: 1em;
-  font-size: 14px;
-  margin-bottom: 30px;
-}
-.bill-container header:before,
-.bill-container header:after {
-  content: "";
-  display: table;
-}
-.bill-container header:after {
-  clear: both;
-}
-.bill-container header h2 {
-  margin-top: 0;
-  margin-bottom: 12px;
-  line-height: 1.2em;
-}
-.bill-container header .subtitle {
-  zoom: 1;
-  margin: 0;
-}
-.bill-container header .subtitle:before,
-.bill-container header .subtitle:after {
-  content: "";
-  display: table;
-}
-.bill-container header .subtitle:after {
-  clear: both;
-}
-.bill-container header .law-section {
-  float: right;
-}
-.bill-container header .bill-number {
-  float: left;
-}
-.bill-container header .detail {
-  border-top: solid 4px #003366;
-  padding-top: 1em;
-  clear: both;
-  margin-top: 1em;
-  font-size: 14px;
-}
-.bill-container header .detail .collapse {
-  clear: both;
-}
-.bill-container header .detail dt {
-  font-weight: 700;
-  float: left;
-  clear: both;
-  padding: 1em 0 .5em;
-}
-.bill-container header .detail dd {
-  margin-bottom: 25px;
-  padding: 1em 2em;
-  background: #eee;
-  border-top: solid 1px #ddd;
-  margin: 0;
-  clear: both;
+  white-space: pre-wrap;
+  padding: 0 10px;
 }
 .bill-container .content {
   font-size: 12px;
-  white-space: pre;
+  width: 510px;
+  float:left;
   font-family: Courier;
   margin-bottom: 60px;
 }
 .bill-container header {
   border: solid 1px #eee;
+}
+.diffstats-container{
+  float: left;
+  position: relative;
+  font-family: Courier;
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+  background: #f8f8f8;
+}
+.diffstats-container .content{
+  padding: 10px;
 }
