@@ -42,6 +42,7 @@ body {
   position: relative;
   left: 2%;
   word-wrap: break-word;
+  white-space: pre-wrap;
 }
 .bill-container header {
   zoom: 1;
