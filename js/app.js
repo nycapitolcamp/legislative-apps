@@ -114,13 +114,13 @@ function format_bill_diffs(diffs) {
                               .replace(/\n/g, '<br>');
         switch (diffs[x][0]) {
             case DIFF_INSERT:
-                html.push('<ins style="background:#e6ffe6;">' + text + '</ins>');
+                html.push('<span class="added_text">' + text + '</span>');
                 break;
             case DIFF_DELETE:
-                html.push('<del style="background:#ffe6e6;">' + text + '</del>');
+                html.push('<span class="deleted_text">' + text + '</span>');
                 break;
             case DIFF_EQUAL:
-                html.push('<span>' + text + '</span>');
+                html.push('<span class="unaltered_text">' + text + '</span>');
                 break;
         }
     }
