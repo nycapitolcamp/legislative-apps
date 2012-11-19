@@ -36,7 +36,7 @@ body {
   display: none;
 }
 .bill-container {
-  /*width: 47%;*/
+  width: 47%;
   margin-right: 2%;
   float: left;
   position: relative;
@@ -106,7 +106,9 @@ body {
 }
 .bill-container .content {
   font-size: 12px;
-  white-space: pre;
+  width: 510px;
+  float:left;
+  /*white-space: pre;*/
   font-family: Courier;
   margin-bottom: 60px;
 }

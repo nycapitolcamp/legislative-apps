@@ -107,22 +107,57 @@ function BillDiffStats(diffs){
 
 function format_bill_diffs(diffs) {
     var html = [];
+    var cursor = 0;
     for (var x = 0; x < diffs.length; x++) {
-        var text = diffs[x][1].replace(/&/g, '&amp;')
-                              .replace(/</g, '&lt;')
-                              .replace(/>/g, '&gt;')
-                              .replace(/\n/g, '<br>');
-        switch (diffs[x][0]) {
-            case DIFF_INSERT:
-                html.push('<span class="added_text">' + text + '</span>');
-                break;
-            case DIFF_DELETE:
-                html.push('<span class="deleted_text">' + text + '</span>');
-                break;
-            case DIFF_EQUAL:
-                html.push('<span class="unaltered_text">' + text + '</span>');
-                break;
-        }
+        /*
+        var original_text = diffs[x][1];
+        var new_lines = [];
+        var lines = original_text.split('\n');
+        console.log(lines);
+        for (var l=0; l < lines.length; l++) {
+            var new_line = lines[l];
+            var total_chars = new_line.length;
+            var used_chars = 0;
+
+            if (total_chars == 0) {
+                new_lines.push('\n');
+                cursor = 0;
+            } else {
+                while(total_chars != used_chars) {
+                    part = new_line.slice(used_chars,used_chars+72-cursor);
+                    cursor += part.length;
+                    used_chars += part.length;
+                    if (cursor==72 || (l+1!=lines.length && used_chars==total_chars)) {
+                        part+='\n';
+                        cursor = 0;
+                    }
+                    new_lines.push(part);
+                }
+            }
+        }*/
+
+        var original_text = diffs[x][1];
+        // for (var i=0; i < new_lines.length; i++) {
+            var text = original_text.replace(/&/g, '&amp;')
+                               .replace(/</g, '&lt;')
+                               .replace(/>/g, '&gt;')
+                               .replace(/\n/g, '<br/>');
+            var diff_type = diffs[x][0];
+            if (text.match(/^\s*$/)) {
+                diff_type = DIFF_EQUAL;
+            }
+            switch (diff_type) {
+                case DIFF_INSERT:
+                    html.push('<span class="added_text">' + text + '</span>');
+                    break;
+                case DIFF_DELETE:
+                    html.push('<span class="deleted_text">' + text + '</span>');
+                    break;
+                case DIFF_EQUAL:
+                    html.push('<span class="unaltered_text">' + text + '</span>');
+                    break;
+            }
+        // }
     }
     return html.join('');
 };
@@ -198,11 +233,24 @@ var clean_text_formatting = function(messy_text){
 
         } else {
             // Remove the leading white-space and line numbers
-            cleaned_lines.push(line.replace(/^[0-9 ]{7}/, "").replace(/([^ ]) +/g,'$1 '));
+            original_length = line.length
+            fixed_line = line.replace(/^[0-9 ]{7}/, "");
+            if (fixed_line.length != 72) {
+                fixed_line+='\n'
+            } else {
+                if (fixed_line[71] == '-') {
+                    fixed_line = fixed_line.slice(0,71);
+                }
+            }
+            fixed_line = fixed_line.replace(/([^ ]) +/g,'$1 ');
+
+
+            console.log(fixed_line)
+            cleaned_lines.push(fixed_line);
         }
         i++;
     } while (i < dirty_lines.length);
-    return cleaned_lines.join('\n');
+    return cleaned_lines.join('');
 }
 
 
@@ -227,8 +275,4 @@ Bill.prototype.render = function(){
     var tmpl = _.template(this.template);
     var view = $("<article class='bill-container'>").html(tmpl({difftext:this.difftext}));
     $('#bills').empty().html(view);
-
-
-    // console.log(this.difftext);
-
 };
