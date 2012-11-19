@@ -212,6 +212,8 @@ var clean_text_formatting = function(messy_text){
             } else {
                 if (fixed_line[71] == '-') {
                     fixed_line = fixed_line.slice(0,71);
+                } else {
+                    fixed_line += ' ';
                 }
             }
             fixed_line = fixed_line.replace(/([^ ]) +/g,'$1 ');
