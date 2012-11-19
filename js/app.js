@@ -100,8 +100,8 @@ function BillDiffStats(diffs){
      if(diffs[i][0]==DIFF_DELETE) deletions=deletions+diffs[i][1].split(/\s+/).length;
      if(diffs[i][0]==DIFF_INSERT) insertions=insertions+diffs[i][1].split(/\s+/).length;
     }
-
-    var summarystats = 'Total Words = '+(unchanged+deletions+insertions)+'   Unchanged: '+unchanged+'   Deleted: '+deletions+'   Inserted: '+insertions;
+// 
+    var summarystats = 'Total Words = '+(unchanged+deletions+insertions)+'<br/>   Unchanged: '+unchanged+'<br/>   <span class="deleted_text">Deleted: '+deletions+'</span><br/>   <span class="added_text">Inserted: '+insertions+'</span>';
     return summarystats;
 }
 
@@ -124,6 +124,7 @@ function format_bill_diffs(diffs) {
                 html.push('<span class="added_text">' + text + '</span>');
                 break;
             case DIFF_DELETE:
+            // if( text == "<br/>" ){ text ='';};
                 html.push('<span class="deleted_text">' + text + '</span>');
                 break;
             case DIFF_EQUAL:
@@ -241,12 +242,13 @@ Bill.prototype.render = function(){
     this.difftext = format_bill_diffs(billDiffs);
 
     this.diffstatstext = BillDiffStats(billDiffs);
-
-    var statstmpl = _.template(this.diffstatstemplate);
-    var statsview = $("<article class='bill-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
-    $('#diffstats').empty().html(statsview);
-
-    var tmpl = _.template(this.template);
+   var tmpl = _.template(this.template);
     var view = $("<article class='bill-container'>").html(tmpl({difftext:this.difftext}));
     $('#bills').empty().html(view);
+
+    var statstmpl = _.template(this.diffstatstemplate);
+    var statsview = $("<article class='diffstats-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
+    $('#diffstats').empty().html(statsview);
+
+ 
 };
