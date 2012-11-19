@@ -106,58 +106,30 @@ function BillDiffStats(diffs){
 }
 
 function format_bill_diffs(diffs) {
+    var ignore_white_space = false;
     var html = [];
     var cursor = 0;
     for (var x = 0; x < diffs.length; x++) {
-        /*
-        var original_text = diffs[x][1];
-        var new_lines = [];
-        var lines = original_text.split('\n');
-        console.log(lines);
-        for (var l=0; l < lines.length; l++) {
-            var new_line = lines[l];
-            var total_chars = new_line.length;
-            var used_chars = 0;
-
-            if (total_chars == 0) {
-                new_lines.push('\n');
-                cursor = 0;
-            } else {
-                while(total_chars != used_chars) {
-                    part = new_line.slice(used_chars,used_chars+72-cursor);
-                    cursor += part.length;
-                    used_chars += part.length;
-                    if (cursor==72 || (l+1!=lines.length && used_chars==total_chars)) {
-                        part+='\n';
-                        cursor = 0;
-                    }
-                    new_lines.push(part);
-                }
-            }
-        }*/
-
-        var original_text = diffs[x][1];
-        // for (var i=0; i < new_lines.length; i++) {
-            var text = original_text.replace(/&/g, '&amp;')
+        var text = diffs[x][1].replace(/&/g, '&amp;')
                                .replace(/</g, '&lt;')
                                .replace(/>/g, '&gt;')
                                .replace(/\n/g, '<br/>');
-            var diff_type = diffs[x][0];
-            if (text.match(/^\s*$/)) {
-                diff_type = DIFF_EQUAL;
-            }
-            switch (diff_type) {
-                case DIFF_INSERT:
-                    html.push('<span class="added_text">' + text + '</span>');
-                    break;
-                case DIFF_DELETE:
-                    html.push('<span class="deleted_text">' + text + '</span>');
-                    break;
-                case DIFF_EQUAL:
-                    html.push('<span class="unaltered_text">' + text + '</span>');
-                    break;
-            }
-        // }
+
+        var diff_type = diffs[x][0];
+        if (ignore_white_space && text.match(/^\s*$/)) {
+            diff_type = DIFF_EQUAL;
+        }
+        switch (diff_type) {
+            case DIFF_INSERT:
+                html.push('<span class="added_text">' + text + '</span>');
+                break;
+            case DIFF_DELETE:
+                html.push('<span class="deleted_text">' + text + '</span>');
+                break;
+            case DIFF_EQUAL:
+                html.push('<span class="unaltered_text">' + text + '</span>');
+                break;
+        }
     }
     return html.join('');
 };
