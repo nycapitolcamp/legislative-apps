@@ -96,12 +96,12 @@ function BillDiffStats(diffs){
     var unchanged = 0;
 
     for(var i=0; i<diffs.length; i++){
-     if(diffs[i][0]==DIFF_EQUAL) unchanged=unchanged+1;
-     if(diffs[i][0]==DIFF_DELETE) deletions=deletions+1;
-     if(diffs[i][0]==DIFF_INSERT) insertions=insertions+1;
+     if(diffs[i][0]==DIFF_EQUAL) unchanged=unchanged+diffs[i][1].split(/\s+/).length;
+     if(diffs[i][0]==DIFF_DELETE) deletions=deletions+diffs[i][1].split(/\s+/).length;
+     if(diffs[i][0]==DIFF_INSERT) insertions=insertions+diffs[i][1].split(/\s+/).length;
     }
 
-    var summarystats = 'Total Lines = '+diffs.length+'   Unchanged: '+unchanged+'   Deleted: '+deletions+'   Inserted: '+insertions;
+    var summarystats = 'Total Words = '+(unchanged+deletions+insertions)+'   Unchanged: '+unchanged+'   Deleted: '+deletions+'   Inserted: '+insertions;
     return summarystats;
 }
 
