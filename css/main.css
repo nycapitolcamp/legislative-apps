@@ -61,53 +61,25 @@ textarea {
 
 
 /* ==========================================================================
-   Author's custom styles
+   Bill Diff colors
    ========================================================================== */
 
-
-/* The redundant formulations below deal with potential tradeoffs for CSS matching,
- * particularly if brevity of CSS is favored (using the [class*="..."] selectors) over 
- * probably faster-running class selectors (.{added|deleted}_text_rev_...) that require
- * extra selectors beyond what appear on the page.
- *
- * As an alternative, the revisions for addition/deletion can be seperate classes from
- * general "added and still in bill" and "deleted before current bill" classes, but such
- * additional classes still need to be handled with similar tradeoffs to the current 
- * system of encoding the version and the change into the same class data.
- */
-
-ins,
-span[class*="added_text_rev_"],
-.added_text_rev_1,
-.added_text
-{
-	background: #e6ffe6;
-	text-decoration: underline;
+.added_text{
+	background: #aff2af;
+    color: #000;
+    border-bottom: #009200 1px solid;
 }
 
-del,
-span[class*="deleted_text_rev_"],
-.deleted_text_rev_1,
-.deleted_text
-{
-	background: #ffe6e6;
-	text-decoration: line-through;
+.deleted_text{
+	background: #ffd1d1;
+    color: #000;
+/*	text-decoration: line-through;*/  /* struck through on dark background was hard to read on my screen */
 }
 
 .unaltered_text
 {
 	/* Nothing yet. Just leave the style as the default text format. */
 }
-
-
-
-
-
-
-
-
-
-
 
 /* ==========================================================================
    Media Queries
