@@ -71,7 +71,7 @@ textarea {
 }
 
 .deleted_text{
-	background: #ffd1d1;
+	background: #ffd1d1 url('../img/struck.gif') center;
     color: #000;
 /*	text-decoration: line-through;*/  /* struck through on dark background was hard to read on my screen */
 }
