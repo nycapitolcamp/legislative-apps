@@ -11,10 +11,10 @@
         <div class='header'>
             <form id="getbill">
                 Get Bill: <input type="text" name="bill-id" value="S7033-2011"> 
-                <select name="diff-against"> 
+               <!--  <select name="diff-against"> 
                   <option value="previous" >Previous Version </option>
                   <option value="law" >Changes in Law</option>
-                </select> 
+                </select>  -->
                 <input type="submit" >
             </form> 
         </div>                  
@@ -32,13 +32,36 @@
           </div>
 
         </script>      
-        <script id="billTemplate" type="text/template">
+    <script id="billTemplate" type="text/template">
 
-          <div class="content">
-          <%= difftext %>
-          </div>
+    <header>
+        <p class="bill-number"><%= senateBillNo %></p>
+        <p class="law-section"><%= lawSection %></p>
+        <h3 style="clear:both">Authorizes the creation of certain local civil administrative enforcement bureaus</h3>
+        
+        <form class="bill-result">
+        <p>Compare <select name="bill1">
+            <% for(var i = 0; i < sourceBills.length; i++) { %>
+                <option value="<%= i %>"><%= sourceBills[i].senateBillNo %></option>
+            <% } %>
+        </select> to <select name="bill2">
+            <% for(var i = 0; i < sourceBills.length; i++) { 
 
+                if (sourceBills[i].senateBillNo == senateBillNo) continue;
+                %>
+                    <option value="<%= i %>"><%= sourceBills[i].senateBillNo %></option>
+            <% } %>
+        </select>
+        </p>
+        <input type="submit" value="Get Diff"/>
+        </form>
+    </header>
+
+        <div class="diff-container">
+
+        </div>
         </script>
+
 
         </div>
         <script src="js/jquery-1.7.1.min.js"></script>
