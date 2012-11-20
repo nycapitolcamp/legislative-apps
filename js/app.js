@@ -196,29 +196,22 @@ function Bill(data) {
 var clean_text_formatting = function(messy_text){
     var cleaned_lines = []
     var dirty_lines = messy_text.split(/\r?\n/)
+    var line_numbering_reached = false;
     var i = 0;
     do {
         var line = dirty_lines[i];
-        // Skip the page breaks:
-        //
-        //  EXPLANATION--Matter in ITALICS (underscored) is new; matter in brackets
-        //                       [ ] is old law to be omitted.
-        //                                                            LBD00121-02-1
-        //
-        // S. 39                               2
-        //
-        if (line.match(/EXPLANATION--Matter in ITALICS \(underscored\)/)) {
-            cleaned_lines.pop() // Skip the leading blank line
+		if ( line.match(/^ {0,5}[0-9]{1,5}  /) )
+			line_numbering_reached = true;
 
-            do { // Skip all the lines in between..
-                i+=1;
-                if (i >= dirty_lines.length) {
-                    break;
-                } else {
-                    line = dirty_lines[i];
-                }
-            } while (!line.match(/[A-Z]\. [0-9]{1,5}/));
-            i++; // Skip the trailing blank line
+        // Skip the page breaks:
+        if ( line_numbering_reached === true && line.match(/^ {7,}/) ) {
+			previous_line = cleaned_lines.pop();
+			while ( previous_line.match(/^ *\n?$/) )
+				previous_line = cleaned_lines.pop();
+
+			cleaned_lines.push(previous_line);
+			while ( i < dirty_lines.length && (dirty_lines[i+1]).match(/^ {7,}|^ *\n?$/) )
+				i++; 
 
         } else {
             // Remove the leading white-space and line numbers
