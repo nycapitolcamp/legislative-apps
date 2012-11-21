@@ -21,24 +21,6 @@ jQuery(document).ready(function(){
             // Try to strip the amendment version from in the input string
             // TODO: It'd be better to use a given amendment version as a "start back from here"
             bill_id = bill_id.replace(/([A-Z])0*([0-9]{1,5})[A-Z]?-([0-9]{4})/,'$1$2-$3')
-            // billVersion = new BillVersion({
-            //     id : bill_id
-            // });
-
-            // // technically we would want to bootstrap this data from the server
-            // // that would resolve quite a few little ugly hacks that we're going to
-            // // encounter
-            // billVersion.bind("change", function(){
-            //     bill_collection = billVersion.getBillVersionAmendmentsAsCollection();
-            //     bill_collection_view = new BillVersion_Collection_View({
-            //         el : "#bills",
-            //         collection : bill_collection
-            //     });
-
-            //     bill_collection_view.renderLastN(2);
-            // }.bind(billVersion));
-
-            // billVersion.fetch();
 
 
             getBillData(bill_id, function(data) {
@@ -103,7 +85,7 @@ function BillDiffStats(diffs){
      if(diffs[i][0]==DIFF_INSERT) insertions=insertions+diffs[i][1].split(/\s+/).length;
     }
 
-    var summarystats = 'Total Words = '+(unchanged+deletions+insertions)+'<br/>   Unchanged: '+unchanged+'<br/>   <span class="deleted_text">Deleted: '+deletions+'</span><br/>   <span class="added_text">Inserted: '+insertions+'</span>';
+    var summarystats = '<span class="deleted_text">Deleted: '+deletions+'</span>&nbsp;&nbsp;&nbsp;   <span class="added_text">Inserted: '+insertions+'</span><br/>'+'Total Words = '+(unchanged+deletions+insertions)+'&nbsp;&nbsp;&nbsp;  Unchanged: '+unchanged;
     return summarystats;
 }
 
@@ -152,46 +134,6 @@ function format_bill_diffs(diffs) {
 };
 
 
-function Bill(data) {
-
-    // Merge objects
-    for (key in data) {
-        this[key] = data[key];
-    }
-    this.data = data;
-    // console.log(data)
-
-
-    // Get Amendment info
-    this.amendments = [];
-    this.numAmendments = 0
-    for(bkey in data.amendments) {
-        var amendmentID = data.amendments[bkey]
-
-        var thisBill = this;
-        thisBill.numAmendments++;
-        getBillData(amendmentID, function(data) {
-
-            var results = data.response.results;
-
-            // Iterate over matching bills
-            for(key in results) {
-                // console.log(results[key].data.bill);
-                thisBill.amendments.push(results[key].data.bill);
-                thisBill.amendments[thisBill.amendments.length-1] = results[key].data.bill;
-            }
-
-            // Wait till we have all the amendments
-            if (thisBill.numAmendments == thisBill.amendments.length) {
-               thisBill.render();
-            }
-        });
-
-
-
-    }
-}
-
 
 var clean_text_formatting = function(messy_text){
     var cleaned_lines = []
@@ -238,11 +180,58 @@ var clean_text_formatting = function(messy_text){
 }
 
 
+/* Bill Constructor */
+function Bill(data) {
+
+    // Merge data with bill object
+    for (key in data) this[key] = data[key];
+
+    // Store all bill fulltexts we may compare in a single object using the bill id as the key
+    this.sourceBills = [ this ];
+    
+    
+    // Get Amendment info
+    this.amendments = [];
+    this.numAmendments = 0
+    for(bkey in data.amendments) {
+
+        // preserve a reference to this bill object for the callback
+        var thisBill = this;
+        
+        // count the number of amendments
+        thisBill.numAmendments++;
+
+        // the amendment's bill id
+        var amendmentID = data.amendments[bkey]
+        
+        // retrieve all amendment data
+        getBillData(amendmentID, function(data) {
+
+            var results = data.response.results;
+
+            // Iterate over matching bills - should only be one.
+            for(key in results) {
+                
+                var amendment = results[key].data.bill;
+
+                thisBill.amendments.push(amendment);
+
+                // Add fulltext to our fulltexts object
+                thisBill.sourceBills.push(amendment);
+            }
+
+            // Wait till we have all the amendments to render the bill
+            if (thisBill.numAmendments == thisBill.amendments.length) {
+               thisBill.render();
+            }
+        });
+    }
+
+}
 Bill.prototype.template = $("#billTemplate").html();
 Bill.prototype.diffstatstemplate = $("#diffstatsTemplate").html();
 Bill.prototype.render = function(){
-    console.log('reader');
-    console.log(this.type);
+    
     var bill_original = clean_text_formatting(this.fulltext);
 
     if(this.type == "previous"){
@@ -259,12 +248,75 @@ Bill.prototype.render = function(){
     }else{
         this.difftext = format_bill_plaintext_diffs(bill_original);
     }
-   
-
-   var tmpl = _.template(this.template);
-    var view = $("<article class='bill-container'>").html(tmpl({difftext:this.difftext}));
-    $('#bills').empty().html(view);
     
-   
- 
-};
+
+    // Sort the source bill alphabetically so they show up right in the view
+    this.sourceBills.sort(function(a, b) {
+        var textA = a.senateBillNo.toUpperCase();
+        var textB = b.senateBillNo.toUpperCase();
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+    });
+
+    
+    // Render the view
+    var tmpl = _.template(this.template);
+    this.view = $("<article class='bill-container'>").html(tmpl(this));
+    $('#bills').empty().html(this.view);
+    
+
+    // keep reference to this bill in event handler
+    var thisBill = this;
+
+    // Bind events
+    this.view.find('form').bind('submit', function(e) {
+        e.preventDefault();
+
+        // Retrieve bill ids from the form
+        var sourceBillIndex = $(this).find('[name=bill1]').val();
+        var compareBillIndex = $(this).find('[name=bill2]').val();
+
+        // Render the difference
+        thisBill.renderDiff(sourceBillIndex, compareBillIndex);
+    });
+
+
+    // Render the default diff
+    thisBill.renderDiff(0, 1);
+}
+Bill.prototype.renderDiff = function(sourceBillIndex, compareBillIndex) {
+
+    // Clean fulltexts
+    var bill_original = clean_text_formatting(this.sourceBills[sourceBillIndex].fulltext);
+
+    if (compareBillIndex == 'changes'){
+
+        // Do the changes in law highlighting 
+        this.difftext = format_bill_plaintext_diffs(bill_original);
+
+        // Clear the diff stats. for now
+        $('#diffstats').empty();
+
+    } else {
+
+        // Diff with the second bills
+        var bill_amended = clean_text_formatting(this.sourceBills[compareBillIndex].fulltext);
+
+        var dmp = new diff_match_patch();    
+        var billDiffs = dmp.diff_main(bill_original, bill_amended, false);
+        dmp.diff_cleanupSemantic(billDiffs);
+        
+        this.difftext = format_bill_diffs(billDiffs);
+        this.diffstatstext = BillDiffStats(billDiffs);
+
+        // Render the diff stats
+        var statstmpl = _.template(this.diffstatstemplate);
+        var statsview = $("<article class='diffstats-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
+        $('#diffstats').empty().html(statsview);
+    }
+
+    // Insert diff markup into existing view
+    this.view.find('.diff-container').html(this.difftext);
+} 
+
+
+
