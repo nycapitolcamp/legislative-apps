@@ -1,39 +1,109 @@
-/* Open Legislation Main */
 body {
   font-family: Arial, sans-serif;
 }
+input {
+  font-size: inherit;
+  border: solid 1px #69C;
+  display: inline-block;
+  padding: 5px 7px;
+  border-radius: 2px;
+}
+input[type=submit] {
+  background: #ffffff;
+  background: -moz-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(50%, #f1f1f1), color-stop(51%, #e1e1e1), color-stop(100%, #f6f6f6));
+  background: -webkit-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%);
+  background: -o-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%);
+  background: -ms-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6', GradientType=0);
+  cursor: pointer;
+  -webkit-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+  padding: 5px 10px;
+}
+
+
+
+
 .header {
-  background-color:#dedede;    
+  background: #036;
+  color: #fff;
+  font-size: 14px;
+  border-bottom: solid 4px #DDD;
 }
 #getbill {
-  padding:10px 25px;
+  padding: 10px 25px;
   margin: 0;
 }
+
+
+
+
 .bill-container {
-  float: left;
   position: relative;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  padding: 0 10px;
-}
-.bill-container .content {
-  font-size: 12px;
-  width: 525px;
-  float:left;
-  font-family: Courier;
-  margin-bottom: 60px;
+  padding: 20px;
+  width: 45em; /* Bills seem to be formatted for 45em wide */
 }
 .bill-container header {
   border: solid 1px #eee;
+  zoom: 1;
+  padding: 1em;
+  font-size: 14px;
+  margin-bottom: 30px;
 }
-.diffstats-container{
+.bill-container header:before,
+.bill-container header:after {
+  content: "";
+  display: table;
+}
+.bill-container header:after {
+  clear: both;
+}
+.bill-container header h3 {
+  clear: both;
+  margin-top: 0;
+  margin-bottom: 12px;
+  line-height: 1.2em;
+}
+.bill-container header form {
+  border-top: 1px solid #eee;
+}
+.bill-container header form p {
   float: left;
+}
+.bill-container header form input[type=submit] {
+  float: right;
+  margin-top: 1em;
+}
+.bill-container header .law-section {
+  margin-top: 0;
+  float: right;
+}
+.bill-container header .bill-number {
+  margin-top: 0;
+  float: left;
+}
+.diff-container {
+  word-wrap: break-word;
+  font-family: Courier;
+  white-space: pre-wrap;
+}
+
+
+.diffstats-container {
   position: relative;
   font-family: Courier;
-  width: 100%;
-  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
   background: #f8f8f8;
+  font-size: 12px;
+  position: fixed;
+  bottom: 0;
+  background: #F8F8F8;
+  margin: 0;
+  width: 100%;
+  z-index: 12;
 }
-.diffstats-container .content{
+.diffstats-container .content {
   padding: 10px;
 }
