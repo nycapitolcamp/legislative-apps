@@ -294,19 +294,32 @@ Bill.prototype.renderDiff = function(sourceBillIndex, compareBillIndex) {
 
     // Clean fulltexts
     var bill_original = clean_text_formatting(this.sourceBills[sourceBillIndex].fulltext);
-    var bill_amended = clean_text_formatting(this.sourceBills[compareBillIndex].fulltext);
 
-    var dmp = new diff_match_patch();    
-    var billDiffs = dmp.diff_main(bill_original, bill_amended, false);
-    dmp.diff_cleanupSemantic(billDiffs);
-    
-    this.difftext = format_bill_diffs(billDiffs);
-    this.diffstatstext = BillDiffStats(billDiffs);
-    
-    // Render the diff stats
-    var statstmpl = _.template(this.diffstatstemplate);
-    var statsview = $("<article class='diffstats-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
-    $('#diffstats').empty().html(statsview);
+    if (compareBillIndex == 'changes'){
+
+        // Do the changes in law highlighting 
+        this.difftext = format_bill_plaintext_diffs(bill_original);
+
+        // Clear the diff stats. for now
+        $('#diffstats').empty();
+
+    } else {
+
+        // Diff with the second bills
+        var bill_amended = clean_text_formatting(this.sourceBills[compareBillIndex].fulltext);
+
+        var dmp = new diff_match_patch();    
+        var billDiffs = dmp.diff_main(bill_original, bill_amended, false);
+        dmp.diff_cleanupSemantic(billDiffs);
+        
+        this.difftext = format_bill_diffs(billDiffs);
+        this.diffstatstext = BillDiffStats(billDiffs);
+
+        // Render the diff stats
+        var statstmpl = _.template(this.diffstatstemplate);
+        var statsview = $("<article class='diffstats-container'>").html(statstmpl({diffstatstext:this.diffstatstext}));
+        $('#diffstats').empty().html(statsview);
+    }
 
     // Insert diff markup into existing view
     this.view.find('.diff-container').html(this.difftext);

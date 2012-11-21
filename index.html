@@ -38,6 +38,7 @@
         <p class="bill-number"><%= senateBillNo %></p>
         <p class="law-section"><%= lawSection %></p>
         <h3 style="clear:both"><%= title %></h3>
+        <p class="sponsor">Sponsor: <%= sponsor.fullname %></p>
         
         <form class="bill-result">
         <p>Compare <select name="bill1">
@@ -51,6 +52,7 @@
                 %>
                     <option value="<%= i %>"><%= sourceBills[i].senateBillNo %></option>
             <% } %>
+            <option value="changes">Changes in Law</option>
         </select>
         </p>
         <input type="submit" value="Get Diff"/>
